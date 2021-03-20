@@ -4,6 +4,7 @@ class Mouse {
     this.isDown = false;
     this.downAt = null;
     this.selectionArea = { w: 0, h: 0 };
+    this.selected = [];
 
     this.startListeners();
   }
@@ -13,6 +14,8 @@ class Mouse {
   }
 
   draw() {
+    this.selected.forEach((e) => e.box.draw());
+
     if (!this.isDown) return;
 
     let selectWidth = this.downAt.x - this.pos.x;
@@ -22,10 +25,16 @@ class Mouse {
     ctx.strokeStyle = "green";
     ctx.strokeRect(this.pos.x, this.pos.y, selectWidth, selectHeigth);
 
-    this.selectionMode();
   }
 
-  selectionMode() {
+  update() {
+    if (!this.isDown) return;
+    
+    this.selected = [];
+    this.selectingEntities();
+  }
+
+  selectingEntities() {
     let entities = game.entities;
     let mouseBox = new Box(
       this.downAt.x,
@@ -38,8 +47,10 @@ class Mouse {
       let collide = CollisionHandler.detectCollision(e.box, mouseBox);
 
       if (collide) {
-        e.box.draw();
+        this.selected.push(e);
       }
     });
   }
+
+  selectionMode() {}
 }

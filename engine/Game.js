@@ -27,6 +27,7 @@ class Game {
     //this.player.draw();
 
     this.mouse.draw();
+    this.mouse.update();
 
     if (this.time > 30) {
       this.posx += 50;
