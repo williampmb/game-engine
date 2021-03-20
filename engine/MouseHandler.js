@@ -4,6 +4,8 @@ const BUTTON = {
   RIGHT: 2,
 };
 
+const MIN_DIST_TO_SELECT = 20;
+
 class MouseHandler {
   constructor() {
     document.addEventListener("mousemove", this.onMouseMove);
@@ -14,18 +16,17 @@ class MouseHandler {
   onMouseUp(event) {
     const mouse = game.mouse;
 
+    if (mouse.state === MOUSE_STATE.CLICKED) {
+      mouse.passOrder();
+    }
+
     mouse.downAt = null;
     mouse.state = MOUSE_STATE.NORMAL;
-
-
- 
   }
 
   onMouseDown(event) {
-    console.log("EVVENT MOUSE", event);
-
     const mouse = game.mouse;
-    mouse.state=MOUSE_STATE.CLICKED;
+    mouse.state = MOUSE_STATE.CLICKED;
 
     // UPDATE X Y BASED ON CANVAS
     let rect = canvas.getBoundingClientRect();
@@ -33,11 +34,8 @@ class MouseHandler {
     let y = event.clientY - rect.top; //normalize inside of canvas
 
     if (event.button === BUTTON.LEFT) {
-      //Create a command
-      mouse.command = new Point2D(x, y);
-
       // UPDATE DOWN AT MOUSE STATUS
-      mouse.downAt = new Point2D(x, y);
+      mouse.downAt = new Vector2D(x, y);
       mouse.selectionArea = {
         w: 0,
         h: 0,
@@ -51,15 +49,23 @@ class MouseHandler {
   }
 
   onMouseMove(mouseEvent) {
-    const mouse = game.mouse;
-
-    mouse.state= mouse.state === MOUSE_STATE.CLICKED ? MOUSE_STATE.SELECTING : mouse.state; 
-
     const rect = canvas.getBoundingClientRect();
     let x = mouseEvent.clientX - rect.left;
     let y = mouseEvent.clientY - rect.top;
-    
-    mouse.pos = new Point2D(x, y);
+    let dt = 9999;
+    const mouse = game.mouse;
+    mouse.pos = new Vector2D(x, y);
+
+    if (mouse.state === MOUSE_STATE.CLICKED) {
+      const oldClickedPos = mouse.downAt.copy();
+      oldClickedPos.sub(mouse.pos);
+      dt = oldClickedPos.mag();
+    }
+
+    mouse.state =
+      mouse.state === MOUSE_STATE.CLICKED && dt > MIN_DIST_TO_SELECT
+        ? MOUSE_STATE.SELECTING
+        : mouse.state;
 
     if (mouse.state === MOUSE_STATE.SELECTING) {
       let factorX = x > mouse.downAt.x ? 1 : -1;

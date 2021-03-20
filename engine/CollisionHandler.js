@@ -14,15 +14,15 @@ class CollisionHandler {
 
   static detectCollision(box1, box2) {
     let collideX = CollisionHandler.detectCollisionOneDimension(
-      box1.x,
+      box1.pos.x,
       box1.w,
-      box2.x,
+      box2.pos.x,
       box2.w
     );
     let collideY = CollisionHandler.detectCollisionOneDimension(
-      box1.y,
+      box1.pos.y,
       box1.h,
-      box2.y,
+      box2.pos.y,
       box2.h
     );
 

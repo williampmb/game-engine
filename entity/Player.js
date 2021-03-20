@@ -4,43 +4,24 @@ class Player extends BaseEntity {
 
     this.frameX = 0;
     this.frameY = 0;
-    this.speed = 5;
+    this.speed = 0.1;
+    this.maxVelocity = 1;
 
-    this.offsetBoxCollider(); //should be called once only in the constructor
-
-    this.task = new Point2D(0,0)
-  }
-
-  /**
-   * Offset x and y of box collider.
-   * the sprite image has a x and y position
-   * however the collision occurs in diffent pixel than the sprite draw
-   */
-  offsetBoxCollider() {
-    this.box.x += 12;
-    this.box.y += 3;
+    this.task = null;
   }
 
   update() {
-    // if (Math.abs(goal.x - this.x) < 10 && Math.abs(goal.y - this.y) < 10) {
-    //   return;
-    // }
-    // if (goal.x > this.x) {
-    //   this.x += this.speed;
-    // }
-    // if (goal.x <= this.x) {
-    //   this.x -= this.speed;
-    // }
-    // if (goal.y > this.y) {
-    //   this.y += this.speed;
-    // }
-    // if (goal.y <= this.y) {
-    //   this.y -= this.speed;
-    // }
+    if (!this.task) return;
+
+    this.acceleration = this.calculateAcceleration();
+
+    this.velocity.add(this.acceleration);
+    this.box.pos.add(this.velocity);
+    this.pos.add(this.velocity);
+    this.velocity.limit(this.maxVelocity);
   }
 
   draw() {
-    // ctx.drawImage(img, this.x, this.y, 50, 50);
 
     ctx.drawImage(
       img,
@@ -53,5 +34,44 @@ class Player extends BaseEntity {
       50,
       50
     );
+
+    this.debug();
+  }
+
+  debug() {
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = "2";
+
+    let curPos = new Vector2D(this.pos.x, this.pos.y);
+    let nextPost = new Vector2D(this.pos.x, this.pos.y);
+    const actmp = new Vector2D(this.acceleration.x, this.acceleration.y);
+    actmp.setMag(20);
+    nextPost.add(actmp);
+
+    ctx.beginPath();
+    ctx.moveTo(curPos.x, curPos.y);
+    ctx.lineTo(nextPost.x, nextPost.y);
+    ctx.stroke();
+
+    let dirVel = new Vector2D(this.pos.x, this.pos.y);
+    let visualVel = new Vector2D(this.velocity.x, this.velocity.y);
+    visualVel.setMag(10);
+    dirVel.add(visualVel);
+
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = "2";
+    ctx.beginPath();
+    ctx.moveTo(curPos.x, curPos.y);
+    ctx.lineTo(dirVel.x, dirVel.y);
+    ctx.stroke();
+  }
+
+  calculateAcceleration() {
+    const towards = new Vector2D(this.task.x, this.task.y);
+    const acceleration = new Vector2D(this.pos.x, this.pos.y);
+
+    towards.sub(acceleration);
+    towards.setMag(this.speed);
+    return towards;
   }
 }
