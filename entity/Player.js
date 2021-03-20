@@ -7,6 +7,8 @@ class Player extends BaseEntity {
     this.speed = 5;
 
     this.offsetBoxCollider(); //should be called once only in the constructor
+
+    this.task = new Point2D(0,0)
   }
 
   /**

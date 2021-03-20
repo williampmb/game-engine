@@ -1,11 +1,18 @@
+const MOUSE_STATE ={
+  NORMAL:'NORMAL',
+  SELECTING:'SELECTING',
+  CLICKED:'CLICKED',
+}
+
 class Mouse {
   constructor() {
     this.pos = new Point2D(0, 0);
-    this.isDown = false;
     this.downAt = null;
     this.selectionArea = { w: 0, h: 0 };
     this.selected = [];
 
+    this.command = new Point2D(0,0); 
+    this.state = MOUSE_STATE.NORMAL;
     this.startListeners();
   }
 
@@ -16,7 +23,7 @@ class Mouse {
   draw() {
     this.selected.forEach((e) => e.box.draw());
 
-    if (!this.isDown) return;
+    if (this.state !== MOUSE_STATE.SELECTING) return;
 
     let selectWidth = this.downAt.x - this.pos.x;
     let selectHeigth = this.downAt.y - this.pos.y;
@@ -28,9 +35,9 @@ class Mouse {
   }
 
   update() {
-    if (!this.isDown) return;
+    if (this.state !== MOUSE_STATE.SELECTING) return;
     
-    this.selected = [];
+   
     this.selectingEntities();
   }
 
@@ -43,13 +50,15 @@ class Mouse {
       this.selectionArea.fy * this.selectionArea.h
     );
 
+    this.selectedTmp = [];
     entities.forEach((e) => {
       let collide = CollisionHandler.detectCollision(e.box, mouseBox);
 
       if (collide) {
-        this.selected.push(e);
+        this.selectedTmp.push(e);
       }
     });
+    this.selected = this.selectedTmp;
   }
 
   selectionMode() {}
