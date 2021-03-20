@@ -1,7 +1,10 @@
 class CollisionHandler {
-  constructor() {}
+  constructor() {
+  }
 
   static showDebug = 0;
+  
+  static debug=false;
 
   static debug() {
     let entities = game.entities;
@@ -36,7 +39,7 @@ class CollisionHandler {
     let distMiddle = Math.abs(middle1 - middle2);
 
     let maxSide = Math.abs(sideLength1 / 2) + Math.abs(sideLength2 / 2);
-    if (this.showDebug > 50) {
+    if (this.showDebug > 50 && this.debug) {
       console.log({
         x1,
         sideLength1,

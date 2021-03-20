@@ -52,7 +52,7 @@ class Mouse {
     this.selectedTmp = [];
     entities.forEach((e) => {
       let collide = CollisionHandler.detectCollision(e.box, mouseBox);
-      console.log('Colide', collide, ' Box1:', e.box, ' boxM:', mouseBox)
+      //console.log('Colide', collide, ' Box1:', e.box, ' boxM:', mouseBox)
       if (collide) {
         this.selectedTmp.push(e);
       }

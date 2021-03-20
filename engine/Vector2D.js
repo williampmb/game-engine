@@ -20,31 +20,34 @@ class Vector2D {
   }
 
   mag() {
+    if (this.x === 0 && this.y === 0) return 0;
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   normalize() {
     const mag = this.mag();
+    if (mag === 0) return;
     this.x /= mag;
     this.y /= mag;
   }
 
   setMag(n) {
-    if(this.mag()==0){
-      this.x=1;
-      this.y=1;
+    if (n == 0) {
+      this.x = 0;
+      this.y = 0;
+      return;
     }
     this.normalize();
     this.mult(n);
   }
 
-  limit(n){
-    if(this.mag()>n){
+  limit(n) {
+    if (this.mag() > n) {
       this.setMag(n);
     }
   }
 
-  copy(){
-    return new Vector2D(this.x,this.y);
+  copy() {
+    return new Vector2D(this.x, this.y);
   }
 }

@@ -15,6 +15,10 @@ class Player extends BaseEntity {
 
     this.acceleration = this.calculateAcceleration();
 
+    if (this.acceleration.mag() === 0) {
+      return;
+    }
+
     this.velocity.add(this.acceleration);
     this.box.pos.add(this.velocity);
     this.pos.add(this.velocity);
@@ -22,7 +26,6 @@ class Player extends BaseEntity {
   }
 
   draw() {
-
     ctx.drawImage(
       img,
       this.frameX,
@@ -67,11 +70,19 @@ class Player extends BaseEntity {
   }
 
   calculateAcceleration() {
-    const towards = new Vector2D(this.task.x, this.task.y);
+    let towards = new Vector2D(this.task.x, this.task.y);
     const acceleration = new Vector2D(this.pos.x, this.pos.y);
 
     towards.sub(acceleration);
+
+    if (towards.mag() <= 10) {
+      this.velocity = new Vector2D(0,0);
+      this.acceleration = new Vector2D(0,0);
+      return this.acceleration;
+    }
+
     towards.setMag(this.speed);
+
     return towards;
   }
 }
