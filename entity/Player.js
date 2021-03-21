@@ -38,7 +38,7 @@ class Player extends BaseEntity {
       50
     );
 
-    this.debug();
+    //this.debug();
   }
 
   debug() {

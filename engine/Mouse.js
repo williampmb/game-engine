@@ -12,6 +12,7 @@ class Mouse {
     this.selected = [];
 
     this.state = MOUSE_STATE.NORMAL;
+    this.button = BUTTON.NORMAL;
     this.startListeners();
   }
 
@@ -36,6 +37,15 @@ class Mouse {
 
   startListeners() {
     new MouseHandler();
+  }
+
+  cancelSelection(){
+    this.selected = [];
+  }
+  
+  selectedSingleEntity(e){
+    this.selected = [];
+    this.selected.push(e);
   }
 
   selectingEntities() {

@@ -1,17 +1,15 @@
 class CollisionHandler {
-  constructor() {
-  }
+  constructor() {}
 
   static showDebug = 0;
-  
-  static debug=false;
+
+  static debugBool = false;
 
   static debug() {
     let entities = game.entities;
     entities.forEach((e) => {
       const box = e.box;
       box.draw();
-     
     });
   }
 
@@ -39,7 +37,7 @@ class CollisionHandler {
     let distMiddle = Math.abs(middle1 - middle2);
 
     let maxSide = Math.abs(sideLength1 / 2) + Math.abs(sideLength2 / 2);
-    if (this.showDebug > 50 && this.debug) {
+    if (this.showDebug > 50 && this.debugBool) {
       console.log({
         x1,
         sideLength1,
@@ -55,5 +53,14 @@ class CollisionHandler {
     this.showDebug++;
 
     return distMiddle < maxSide;
+  }
+
+  static clickedInsideOfBox(point, box) {
+    return (
+      point.x >= box.pos.x &&
+      point.x <= box.pos.x + box.w &&
+      point.y >= box.pos.y &&
+      point.y <= box.pos.y + box.h
+    );
   }
 }

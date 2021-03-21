@@ -1,6 +1,6 @@
 class Game {
   constructor() {
-    this.debugMode = false;
+    this.debugMode = false ;
 
     this.mouse = new Mouse();
 
