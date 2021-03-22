@@ -10,8 +10,6 @@ const game = new Game();
 
 document.addEventListener("mousedown", onMouseClick);
 
-let img = new Image();
-img.src = "./resource/the-guy.png";
 
 function onMouseClick(event) {}
 

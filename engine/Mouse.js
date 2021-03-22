@@ -39,11 +39,11 @@ class Mouse {
     new MouseHandler();
   }
 
-  cancelSelection(){
+  cancelSelection() {
     this.selected = [];
   }
-  
-  selectedSingleEntity(e){
+
+  selectedSingleEntity(e) {
     this.selected = [];
     this.selected.push(e);
   }
@@ -72,7 +72,11 @@ class Mouse {
 
   passOrder() {
     this.selected.forEach((e) => {
-      e.task = new Vector2D(this.downAt.x, this.downAt.y);
+      //e.task = new Vector2D(this.downAt.x, this.downAt.y);
+      e.task = new Vector2D(
+        this.downAt.x - e.box.w / 2,
+        this.downAt.y - e.box.h / 2
+      );
     });
   }
 }

@@ -8,6 +8,13 @@ class Player extends BaseEntity {
     this.maxVelocity = 1;
 
     this.task = null;
+    this.count = 0;
+    this.numbFrame = 20;
+
+    this.img = new Image();
+    this.img.src = "../resource/village.png";
+
+    this.action = ACTION.IDLE;
   }
 
   update() {
@@ -16,7 +23,11 @@ class Player extends BaseEntity {
     this.acceleration = this.calculateAcceleration();
 
     if (this.acceleration.mag() === 0) {
+      this.velocity = new Vector2D(0, 0);
+      this.action = ACTION.IDLE;
       return;
+    } else {
+      this.action = ACTION.WALKING;
     }
 
     this.velocity.add(this.acceleration);
@@ -26,19 +37,21 @@ class Player extends BaseEntity {
   }
 
   draw() {
-    ctx.drawImage(
-      img,
-      this.frameX,
-      this.frameY,
-      50,
-      50,
-      this.pos.x,
-      this.pos.y,
-      50,
-      50
-    );
+    switch (this.action) {
+      case ACTION.IDLE:
+        this.frameX = 0;
+        break;
+      default:
+    }
+    super.draw();
+    if (this.count > this.numbFrame) {
+      this.frameX += 50;
+      this.frameX %= 150;
+      this.count %= this.numbFrame;
+    }
+    this.count++;
 
-    //this.debug();
+    this.debug();
   }
 
   debug() {
@@ -71,13 +84,15 @@ class Player extends BaseEntity {
 
   calculateAcceleration() {
     let towards = new Vector2D(this.task.x, this.task.y);
-    const acceleration = new Vector2D(this.pos.x, this.pos.y);
+    const acceleration = new Vector2D(
+      this.pos.x + this.box.w / 2,
+      this.pos.y + this.box.h / 2
+    );
 
     towards.sub(acceleration);
 
     if (towards.mag() <= 10) {
-      this.velocity = new Vector2D(0,0);
-      this.acceleration = new Vector2D(0,0);
+      this.acceleration = new Vector2D(0, 0);
       return this.acceleration;
     }
 

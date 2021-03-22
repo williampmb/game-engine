@@ -1,29 +1,15 @@
 class Game {
   constructor() {
-    this.debugMode = false ;
+    this.debugMode = false;
+    this.entities = [];
+    this.resources = [];
+    this.buildings = [];
 
     this.mouse = new Mouse();
 
-    this.y = 250;
-    this.x = 375;
     this.gridSystem = new Grid(canvas.width, canvas.height);
-    this.entities = [];
-    this.player = new Player(canvas.width / 2, canvas.height / 2, 28, 42);
-    this.entities.push(this.player);
-    this.player2 = new Player(
-      100 + canvas.width / 2,
-      -200 + canvas.height / 2,
-      28,
-      42
-    );
-    this.entities.push(this.player2);
-    this.player3 = new Player(
-      -100 + canvas.width / 2,
-      canvas.height / 2,
-      28,
-      42
-    );
-    this.entities.push(this.player3);
+
+    this.setup();
   }
 
   draw() {
@@ -47,8 +33,27 @@ class Game {
 
   update(dt) {
     if (!dt) return;
-    this.x += 5 / dt;
-    this.y++;
+  }
+
+  setup() {
+    this.entities = [];
+    this.player = new Player(canvas.width / 2, canvas.height / 2, 28, 42);
+    this.entities.push(this.player);
+    this.player2 = new Player(
+      100 + canvas.width / 2,
+      -200 + canvas.height / 2,
+      28,
+      42
+    );
+    this.entities.push(this.player2);
+    this.player3 = new Player(
+      -100 + canvas.width / 2,
+      canvas.height / 2,
+      28,
+      42
+    );
+    this.entities.push(this.player3);
+
+    this.resources = [];
   }
 }
-//ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
