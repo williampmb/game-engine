@@ -37,12 +37,26 @@ class Game {
 
   setup() {
     this.entities = [];
-    this.player = new Player(canvas.width / 2, canvas.height / 2,  50,
+    this.resources = [];
+
+    for (let numbTree = 0; numbTree < 10; numbTree++) {
+      let x = Math.floor(Math.random() * 700 + 20);
+      let y = Math.floor(Math.random() * 500 + 50);
+      let tree = new Tree(x, y, 50, 50, 18, 11, 36, 11);
+      this.entities.push(tree);
+      this.resources.push(tree);
+    }
+
+    this.player = new Player(
+      canvas.width / 2,
+      canvas.height / 2,
+      50,
       50,
       10,
       3,
       20,
-      3);
+      3
+    );
     this.entities.push(this.player);
     this.player2 = new Player(
       100 + canvas.width / 2,
@@ -65,8 +79,8 @@ class Game {
       20,
       3
     );
-   // this.entities.push(this.player3);
+    this.entities.push(this.player3);
 
-    this.resources = [];
+   
   }
 }

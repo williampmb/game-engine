@@ -20,7 +20,20 @@ class MouseHandler {
 
     if (mouse.state === MOUSE_STATE.CLICKED && mouse.button === BUTTON.LEFT) {
       if (mouse.selected.length > 0) {
-        mouse.passOrder();
+
+        let resource = null;
+        for (let r of game.resources) {
+          let clickedAtBox = CollisionHandler.clickedInsideOfBox(
+            mouse.downAt,
+            r.box
+          );
+          if(clickedAtBox){
+            resource = r;
+            break;
+          }
+        }
+
+        mouse.passOrder(resource);
       } else {
         let entities = game.entities;
 

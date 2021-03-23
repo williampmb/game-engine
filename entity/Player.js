@@ -1,9 +1,9 @@
 class Player extends BaseEntity {
-  constructor(x, y, w, h,ofx,ofy,sw,sh) {
-    super(x, y, w, h,ofx,ofy,sw,sh);
+  constructor(x, y, w, h, ofx, ofy, sw, sh) {
+    super(x, y, w, h, ofx, ofy, sw, sh);
 
     this.frameX = 0;
-    this.frameY = 0;
+    this.frameY = 50;
     this.speed = 0.1;
     this.maxVelocity = 1;
 
@@ -12,24 +12,31 @@ class Player extends BaseEntity {
     this.numbFrame = 20;
 
     this.img = new Image();
-    this.img.src = "../resource/village.png";
+    this.img.src = "../resource/village2.png";
 
     this.action = ACTION.IDLE;
+    this.collect = null;
+    this.capacity = 0;
   }
 
   update() {
     if (!this.task) return;
+    this.action = ACTION.IDLE;
 
     this.acceleration = this.calculateAcceleration();
 
     if (this.acceleration.mag() === 0) {
+      if (this.collect !== null) {
+        this.capacity++;
+        this.action = ACTION.WOODCUTTING;
+        return;
+      }
       this.velocity = new Vector2D(0, 0);
-      this.action = ACTION.IDLE;
+     
       return;
-    } else {
-      this.action = ACTION.WALKING;
-    }
+    } 
 
+    this.action = ACTION.WALKING;
     this.velocity.add(this.acceleration);
     this.box.pos.add(this.velocity);
     this.pos.add(this.velocity);
@@ -43,7 +50,9 @@ class Player extends BaseEntity {
         break;
       default:
     }
+
     super.draw();
+
     if (this.count > this.numbFrame) {
       this.frameX += 50;
       this.frameX %= 150;
@@ -51,7 +60,11 @@ class Player extends BaseEntity {
     }
     this.count++;
 
-   // this.debug();
+    if (this.action === ACTION.WOODCUTTING) {
+      ctx.font = "30px Arial";
+      ctx.fillText("+ " + this.capacity, 10, 50);
+    }
+    // this.debug();
   }
 
   debug() {
@@ -62,9 +75,9 @@ class Player extends BaseEntity {
     }
 
     ctx.beginPath();
-    ctx.rect(this.pos.x - this.w/2, this.pos.y-this.h/2, this.w, this.h);
+    ctx.rect(this.pos.x - this.w / 2, this.pos.y - this.h / 2, this.w, this.h);
     ctx.stroke();
-    
+
     ctx.strokeStyle = "red";
     ctx.lineWidth = "2";
 

@@ -73,10 +73,18 @@ class Mouse {
     this.selected = this.selectedTmp;
   }
 
-  passOrder() {
-    this.selected.forEach((e) => {
-      //e.task = new Vector2D(this.downAt.x, this.downAt.y);
-      e.task = new Vector2D(this.downAt.x, this.downAt.y);
-    });
+  passOrder(resource) {
+    // if (!resource) {
+    //   this.selected.forEach((e) => {
+    //     e.task = new Vector2D(this.downAt.x, this.downAt.y);
+    //   });
+
+    // }else if(resource.kind === TYPE.WOOD){
+      this.selected.forEach((e) => {
+        e.task = new Vector2D(this.downAt.x, this.downAt.y);
+        e.collect = resource;
+      });
+
+    //}
   }
 }
