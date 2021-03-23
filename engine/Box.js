@@ -1,8 +1,8 @@
 class Box {
-  constructor(x, y, w, h, offsetX, ofssetY) {
-    this.pos = new Vector2D(x + offsetX, y + ofssetY);
-    this.w = w;
-    this.h = h;
+  constructor(x, y, w, h, offsetX=0, ofssetY=0, shrinkW = 0, shrinkH = 0) {
+    this.pos = new Vector2D(x - w / 2 + offsetX, y - h / 2 + ofssetY);
+    this.w = w - shrinkW; //w is different from baseEntity w
+    this.h = h - shrinkH; //h is different from baseEntity h
   }
 
   draw() {

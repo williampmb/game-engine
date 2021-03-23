@@ -17,6 +17,10 @@ class Mouse {
   }
 
   draw() {
+    /*ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.arc(this.pos.x, this.pos.y, 2, 0, 2 * Math.PI);
+    ctx.stroke();*/
     this.selected.forEach((e) => e.box.draw());
 
     if (this.state !== MOUSE_STATE.SELECTING) return;
@@ -50,14 +54,13 @@ class Mouse {
 
   selectingEntities() {
     let entities = game.entities;
-    let mouseBox = new Box(
-      this.downAt.x,
-      this.downAt.y,
-      this.selectionArea.fx * this.selectionArea.w,
-      this.selectionArea.fy * this.selectionArea.h,
-      0,
-      0
-    );
+    let x = this.downAt.x ? this.downAt.x : 0;
+    let y = this.downAt.y ? this.downAt.y : 0;
+    let mouseBox = {
+      pos: { x, y },
+      w: this.selectionArea.fx * this.selectionArea.w,
+      h: this.selectionArea.fy * this.selectionArea.h,
+    };
 
     this.selectedTmp = [];
     entities.forEach((e) => {
@@ -73,10 +76,7 @@ class Mouse {
   passOrder() {
     this.selected.forEach((e) => {
       //e.task = new Vector2D(this.downAt.x, this.downAt.y);
-      e.task = new Vector2D(
-        this.downAt.x - e.box.w / 2,
-        this.downAt.y - e.box.h / 2
-      );
+      e.task = new Vector2D(this.downAt.x, this.downAt.y);
     });
   }
 }

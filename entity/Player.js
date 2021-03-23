@@ -1,6 +1,6 @@
 class Player extends BaseEntity {
-  constructor(x, y, w, h) {
-    super(x, y, w, h);
+  constructor(x, y, w, h,ofx,ofy,sw,sh) {
+    super(x, y, w, h,ofx,ofy,sw,sh);
 
     this.frameX = 0;
     this.frameY = 0;
@@ -51,10 +51,20 @@ class Player extends BaseEntity {
     }
     this.count++;
 
-    this.debug();
+   // this.debug();
   }
 
   debug() {
+    if (this.task !== null) {
+      ctx.beginPath();
+      ctx.arc(this.task.x, this.task.y, 5, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.rect(this.pos.x - this.w/2, this.pos.y-this.h/2, this.w, this.h);
+    ctx.stroke();
+    
     ctx.strokeStyle = "red";
     ctx.lineWidth = "2";
 
@@ -84,14 +94,11 @@ class Player extends BaseEntity {
 
   calculateAcceleration() {
     let towards = new Vector2D(this.task.x, this.task.y);
-    const acceleration = new Vector2D(
-      this.pos.x + this.box.w / 2,
-      this.pos.y + this.box.h / 2
-    );
+    const acceleration = new Vector2D(this.pos.x, this.pos.y);
 
     towards.sub(acceleration);
 
-    if (towards.mag() <= 10) {
+    if (towards.mag() <= 2) {
       this.acceleration = new Vector2D(0, 0);
       return this.acceleration;
     }
