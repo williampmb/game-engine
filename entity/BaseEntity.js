@@ -1,13 +1,15 @@
 const ACTION = {
   WALKING: "WALKING",
   IDLE: "IDLE",
-  WOODCUTTING: 'WOODCUTTING'
+  WOODCUTTING: "WOODCUTTING",
 };
 
 const TYPE = {
   WOOD: "WOOD",
   VILLAGE: "VILLAGE",
 };
+
+const JOB = { WOODCUTTING: "WOODCUTTING" };
 
 class BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {

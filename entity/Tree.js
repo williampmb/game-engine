@@ -15,5 +15,6 @@ class Tree extends BaseEntity{
         this.img.src = "../resource/tree.png";
     
         this.action = ACTION.IDLE;
+        this.job = JOB.WOODCUTTING;
     }
 }

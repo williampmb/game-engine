@@ -3,7 +3,7 @@ class CollisionHandler {
 
   static showDebug = 0;
 
-  static debugBool = true;
+  static debugBool = false;
 
   static debug() {
     let entities = game.entities;

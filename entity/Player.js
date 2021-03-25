@@ -3,7 +3,7 @@ class Player extends BaseEntity {
     super(x, y, w, h, ofx, ofy, sw, sh);
 
     this.frameX = 0;
-    this.frameY = 50;
+    this.frameY = 0;
     this.speed = 0.1;
     this.maxVelocity = 1;
 
@@ -16,31 +16,28 @@ class Player extends BaseEntity {
 
     this.action = ACTION.IDLE;
     this.collect = null;
+    this.job = null;
     this.capacity = 0;
   }
 
   update() {
     if (!this.task) return;
-    this.action = ACTION.IDLE;
 
     this.acceleration = this.calculateAcceleration();
 
     if (this.acceleration.mag() === 0) {
-      if (this.collect !== null) {
+      if (this.job === JOB.WOODCUTTING) {
         this.capacity++;
-        this.action = ACTION.WOODCUTTING;
-        return;
       }
       this.velocity = new Vector2D(0, 0);
-     
-      return;
-    } 
+    }
 
-    this.action = ACTION.WALKING;
     this.velocity.add(this.acceleration);
     this.box.pos.add(this.velocity);
     this.pos.add(this.velocity);
     this.velocity.limit(this.maxVelocity);
+
+    this.updateAction();
   }
 
   draw() {
@@ -48,8 +45,16 @@ class Player extends BaseEntity {
       case ACTION.IDLE:
         this.frameX = 0;
         break;
+      case ACTION.WOODCUTTING:
+        this.frameY = 50;
+        break;
+      case ACTION.WALKING:
+        this.frameY = 0;
+        break;
       default:
     }
+
+    console.log("FRAME XY,", this.frameX, this.frameY);
 
     super.draw();
 
@@ -65,6 +70,17 @@ class Player extends BaseEntity {
       ctx.fillText("+ " + this.capacity, 10, 50);
     }
     // this.debug();
+  }
+
+  updateAction() {
+    const vel = this.velocity.mag();
+    if (vel === 0 && this.job === JOB.WOODCUTTING) {
+      this.action = ACTION.WOODCUTTING;
+    } else if (this.velocity.mag() === 0) {
+      this.action = ACTION.IDLE;
+    } else {
+      this.action = ACTION.WALKING;
+    }
   }
 
   debug() {

@@ -39,7 +39,7 @@ class Game {
     this.entities = [];
     this.resources = [];
 
-    for (let numbTree = 0; numbTree < 10; numbTree++) {
+    for (let numbTree = 0; numbTree < 1; numbTree++) {
       let x = Math.floor(Math.random() * 700 + 20);
       let y = Math.floor(Math.random() * 500 + 50);
       let tree = new Tree(x, y, 50, 50, 18, 11, 36, 11);
@@ -79,7 +79,7 @@ class Game {
       20,
       3
     );
-    this.entities.push(this.player3);
+    //this.entities.push(this.player3);
 
    
   }

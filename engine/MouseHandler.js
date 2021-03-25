@@ -32,7 +32,6 @@ class MouseHandler {
             break;
           }
         }
-
         mouse.passOrder(resource);
       } else {
         let entities = game.entities;

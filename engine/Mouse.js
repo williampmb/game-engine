@@ -80,10 +80,18 @@ class Mouse {
     //   });
 
     // }else if(resource.kind === TYPE.WOOD){
-      this.selected.forEach((e) => {
-        e.task = new Vector2D(this.downAt.x, this.downAt.y);
+    this.selected.forEach((e) => {
+      e.task = new Vector2D(this.downAt.x, this.downAt.y);
+      if (resource) {
+        console.log('New JOB', resource)
         e.collect = resource;
-      });
+        e.job = resource.job;
+      } else {
+        console.log('No job')
+        e.collect = null;
+        e.job = null;
+      }
+    });
 
     //}
   }
