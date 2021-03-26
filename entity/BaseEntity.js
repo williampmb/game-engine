@@ -2,14 +2,19 @@ const ACTION = {
   WALKING: "WALKING",
   IDLE: "IDLE",
   WOODCUTTING: "WOODCUTTING",
+  CARRYING_WOOD: "CARRYING_WOOD",
+  DELIVERYING: "DELIVERING",
+  FIND_WAREHOUSE: "FIND_WAREHOUSE",
+  DROP_RESOURCE: "DROP_RESOURCE",
 };
 
 const TYPE = {
   WOOD: "WOOD",
   VILLAGE: "VILLAGE",
+  BUILDING: "BUILDING",
 };
 
-const JOB = { WOODCUTTING: "WOODCUTTING" };
+const JOB = { IDLE: "IDLE", WOODCUTTING: "WOODCUTTING" };
 
 class BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {

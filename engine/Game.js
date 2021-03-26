@@ -38,6 +38,7 @@ class Game {
   setup() {
     this.entities = [];
     this.resources = [];
+    this.buildings = [];
 
     for (let numbTree = 0; numbTree < 1; numbTree++) {
       let x = Math.floor(Math.random() * 700 + 20);
@@ -46,6 +47,12 @@ class Game {
       this.entities.push(tree);
       this.resources.push(tree);
     }
+
+    let x = Math.floor(Math.random() * 700 + 20);
+    let y = Math.floor(Math.random() * 500 + 50);
+    let storage = new WareHouse(x, y, 50, 50, 18, 11, 36, 11);
+    this.entities.push(storage);
+    this.buildings.push(storage);
 
     this.player = new Player(
       canvas.width / 2,
@@ -80,7 +87,5 @@ class Game {
       3
     );
     //this.entities.push(this.player3);
-
-   
   }
 }

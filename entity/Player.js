@@ -15,29 +15,61 @@ class Player extends BaseEntity {
     this.img.src = "../resource/village2.png";
 
     this.action = ACTION.IDLE;
-    this.collect = null;
     this.job = null;
     this.capacity = 0;
+    this.fullCapacity = 10;
+  }
+
+  amIFull() {
+    return this.capacity >= this.fullCapacity;
+  }
+
+  think(dist) {
+    const isFull = this.amIFull();
+
+    if (dist < 2 && this.action === ACTION.FIND_WAREHOUSE) {
+      return ACTION.DROP_RESOURCE;
+    } else if (dist < 2 && isFull && this.job !== null) {
+      return ACTION.FIND_WAREHOUSE;
+    } else if (dist < 2 && !isFull && this.job == JOB.WOODCUTTING) {
+      return ACTION.WOODCUTTING;
+    } else if (dist > 0 && isFull) {
+      return ACTION.CARRYING_WOOD;
+    } else if (dist > 1) {
+      return ACTION.WALKING;
+    } else {
+      return ACTION.IDLE;
+    }
   }
 
   update() {
-    if (!this.task) return;
+    let distVect = this.distanceToTask();
+    const dist = distVect.mag();
 
-    this.acceleration = this.calculateAcceleration();
+    this.action = this.think(dist);
 
-    if (this.acceleration.mag() === 0) {
-      if (this.job === JOB.WOODCUTTING) {
-        this.capacity++;
+    if (
+      this.action === ACTION.WALKING ||
+      this.action === ACTION.CARRYING_WOOD
+    ) {
+      this.acceleration = this.calculateAcceleration(distVect);
+
+      if (distVect.mag() < 1) {
+        this.velocity = new Vector2D(0, 0);
+        this.acceleration = new Vector2D(0, 0);
       }
-      this.velocity = new Vector2D(0, 0);
+      this.velocity.add(this.acceleration);
+      this.box.pos.add(this.velocity);
+      this.pos.add(this.velocity);
+      this.velocity.limit(this.maxVelocity);
+    } else if (this.action === ACTION.WOODCUTTING) {
+      this.capacity++;
+    } else if (this.action === ACTION.FIND_WAREHOUSE) {
+      this.task = this.findWarehouse();
+    } else if (this.action === ACTION.DROP_RESOURCE) {
+      this.capacity = 0;
+      this.task = this.findNextTask();
     }
-
-    this.velocity.add(this.acceleration);
-    this.box.pos.add(this.velocity);
-    this.pos.add(this.velocity);
-    this.velocity.limit(this.maxVelocity);
-
-    this.updateAction();
   }
 
   draw() {
@@ -51,10 +83,11 @@ class Player extends BaseEntity {
       case ACTION.WALKING:
         this.frameY = 0;
         break;
+      case ACTION.FIND_WAREHOUSE:
+        this.frameY = 100;
+        break;
       default:
     }
-
-    console.log("FRAME XY,", this.frameX, this.frameY);
 
     super.draw();
 
@@ -72,9 +105,23 @@ class Player extends BaseEntity {
     // this.debug();
   }
 
+  findWarehouse() {
+    let building = game.buildings[0];
+    let task = new Vector2D(building.pos.x, building.pos.y);
+    return task;
+  }
+
+  findNextTask() {
+    let resource = game.resources[0];
+    let task = new Vector2D(resource.pos.x, resource.pos.y);
+    return task;
+  }
+
   updateAction() {
     const vel = this.velocity.mag();
-    if (vel === 0 && this.job === JOB.WOODCUTTING) {
+    if (this.fullCapacity <= this.capacity) {
+      this.action = ACTION.CARRYING_WOOD;
+    } else if (vel === 0 && this.job === JOB.WOODCUTTING) {
       this.action = ACTION.WOODCUTTING;
     } else if (this.velocity.mag() === 0) {
       this.action = ACTION.IDLE;
@@ -121,19 +168,23 @@ class Player extends BaseEntity {
     ctx.stroke();
   }
 
-  calculateAcceleration() {
-    let towards = new Vector2D(this.task.x, this.task.y);
-    const acceleration = new Vector2D(this.pos.x, this.pos.y);
+  calculateAcceleration(dist) {
+    const acceleration = dist.copy();
 
-    towards.sub(acceleration);
+    acceleration.setMag(this.speed);
 
-    if (towards.mag() <= 2) {
-      this.acceleration = new Vector2D(0, 0);
-      return this.acceleration;
+    return acceleration;
+  }
+
+  distanceToTask() {
+    if (this.task == null) {
+      return new Vector2D(0, 0);
     }
+    let distance = new Vector2D(this.task.x, this.task.y);
+    const curPos = new Vector2D(this.pos.x, this.pos.y);
 
-    towards.setMag(this.speed);
+    distance.sub(curPos);
 
-    return towards;
+    return distance;
   }
 }
