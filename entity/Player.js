@@ -17,7 +17,8 @@ class Player extends BaseEntity {
     this.action = ACTION.IDLE;
     this.job = null;
     this.capacity = 0;
-    this.fullCapacity = 10;
+    this.fullCapacity = 200;
+    this.heading = DIRECTION.DOWN;
   }
 
   amIFull() {
@@ -59,9 +60,11 @@ class Player extends BaseEntity {
         this.acceleration = new Vector2D(0, 0);
       }
       this.velocity.add(this.acceleration);
+      this.velocity.limit(this.maxVelocity);
       this.box.pos.add(this.velocity);
       this.pos.add(this.velocity);
-      this.velocity.limit(this.maxVelocity);
+
+   
     } else if (this.action === ACTION.WOODCUTTING) {
       this.capacity++;
     } else if (this.action === ACTION.FIND_WAREHOUSE) {
@@ -78,10 +81,23 @@ class Player extends BaseEntity {
         this.frameX = 0;
         break;
       case ACTION.WOODCUTTING:
-        this.frameY = 50;
+        this.frameY = 200;
         break;
       case ACTION.WALKING:
-        this.frameY = 0;
+        switch(this.heading){
+          case DIRECTION.UP:
+            this.frameY = 50;
+            break;
+          case DIRECTION.LEFT:
+            this.frameY = 150;
+            break;
+          case DIRECTION.RIGHT:
+            this.frameY = 100;
+            break;
+          case DIRECTION.DOWN:
+            this.frameY = 0;
+            break;
+        }
         break;
       case ACTION.FIND_WAREHOUSE:
         this.frameY = 100;
@@ -93,7 +109,7 @@ class Player extends BaseEntity {
 
     if (this.count > this.numbFrame) {
       this.frameX += 50;
-      this.frameX %= 150;
+      this.frameX %= 200;
       this.count %= this.numbFrame;
     }
     this.count++;
@@ -102,7 +118,8 @@ class Player extends BaseEntity {
       ctx.font = "30px Arial";
       ctx.fillText("+ " + this.capacity, 10, 50);
     }
-    // this.debug();
+    this.direction();
+    //this.debug();
   }
 
   findWarehouse() {
@@ -166,7 +183,9 @@ class Player extends BaseEntity {
     ctx.moveTo(curPos.x, curPos.y);
     ctx.lineTo(dirVel.x, dirVel.y);
     ctx.stroke();
+
   }
+
 
   calculateAcceleration(dist) {
     const acceleration = dist.copy();

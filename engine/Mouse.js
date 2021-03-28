@@ -81,7 +81,7 @@ class Mouse {
 
     // }else if(resource.kind === TYPE.WOOD){
     this.selected.forEach((e) => {
-      e.task = new Vector2D(this.downAt.x, this.downAt.y);
+      e.task = new Vector2D(this.downAt.x-15, this.downAt.y-10);
       if (resource) {
         console.log('New JOB', resource)
         e.collect = resource;

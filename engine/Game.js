@@ -4,6 +4,7 @@ class Game {
     this.entities = [];
     this.resources = [];
     this.buildings = [];
+    this.fps =0;
 
     this.mouse = new Mouse();
 
@@ -13,26 +14,36 @@ class Game {
   }
 
   draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     // Set line width
     ctx.lineWidth = 1;
 
     this.gridSystem.draw();
     // Door
     this.entities.forEach((e) => {
-      e.update();
       e.draw();
     });
 
     this.mouse.draw();
-    this.mouse.update();
 
     if (this.debugMode) {
       CollisionHandler.debug();
     }
+    
+    this.debug();
+
   }
 
   update(dt) {
     if (!dt) return;
+
+
+    this.entities.forEach((e) => {
+      e.update();
+    });
+
+    
+    this.mouse.update();
   }
 
   setup() {
@@ -86,6 +97,11 @@ class Game {
       20,
       3
     );
-    //this.entities.push(this.player3);
+  //this.entities.push(this.player3);
+  }
+
+  debug(){
+    ctx.font = "14px Arial";
+    ctx.fillText('FPS: '+ parseInt(this.fps) , canvas.width -55, 30);
   }
 }

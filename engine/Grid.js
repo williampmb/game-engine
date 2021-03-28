@@ -2,20 +2,32 @@ class Grid{
     constructor(width,height){
         this.grid = [];
 
+        console.log
         this.oneGridSize = 50; 
 
-        for(let i =0; i < width; i += this.oneGridSize){
-            for(let j = 0; j < height;j+= this.oneGridSize){
-                this.grid.push(new Block(i,j,this.oneGridSize,this.oneGridSize));
+        let i =0,j=0;
+        let tileMap;
+        while(i < width ){
+            while( j < height){
+                let random = Math.random()*10;
+                if(random > 0.1){
+                    tileMap = new Grass(i,j);
+                }else{
+                    tileMap = new Sand(i,j);
+                }
+                this.grid.push(tileMap);
+                j += tileMap.heigth;
             }
+            j=0;
+            i += tileMap.width;
         }
+        
     }
 
     draw(){
         
-        
         for(let b of this.grid){
-           // b.draw();
+            b.draw();
         }
     }
 }

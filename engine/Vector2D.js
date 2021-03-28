@@ -50,4 +50,12 @@ class Vector2D {
   copy() {
     return new Vector2D(this.x, this.y);
   }
+
+  
+  direction(){
+    var angle = Math.atan2(this.y, this.x);
+    var degrees = 180 * angle / Math.PI;
+    degrees = (360 + Math.round(degrees)) % 360;
+    return degrees;
+  }
 }

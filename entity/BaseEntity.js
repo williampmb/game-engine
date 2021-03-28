@@ -16,6 +16,13 @@ const TYPE = {
 
 const JOB = { IDLE: "IDLE", WOODCUTTING: "WOODCUTTING" };
 
+const DIRECTION = {
+  DOWN: "DOWN",
+  UP: "UP",
+  RIGHT: "RIGHT",
+  LEFT: "LEFT",
+};
+
 class BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     this.pos = new Vector2D(x, y);
@@ -25,6 +32,7 @@ class BaseEntity {
     this.h = h;
 
     this.box = new Box(x, y, w, h, ofx, ofy, sw, sh);
+    this.heading = DIRECTION.DOWN;
   }
 
   draw() {
@@ -44,4 +52,22 @@ class BaseEntity {
   update() {}
 
   offsetBoxCollider() {}
+
+  direction() {
+    let degree = this.velocity.direction();
+
+    //
+    if (this.velocity.mag() ===0 || degree > 45 && degree < 135) {
+      this.heading = DIRECTION.DOWN;
+    } else if (degree >= 135 && degree <= 235) {
+      this.heading = DIRECTION.LEFT;
+    } else if (degree <= 45 || degree >= 315) {
+      this.heading = DIRECTION.RIGHT;
+    } else {
+      this.heading = DIRECTION.UP;
+    }
+
+    ctx.font = "30px Arial";
+    ctx.fillText("+ " + this.heading, 10, 50);
+  }
 }
