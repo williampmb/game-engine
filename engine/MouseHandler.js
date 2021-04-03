@@ -1,5 +1,5 @@
 const BUTTON = {
-  NORMAL:-1,
+  NORMAL: -1,
   LEFT: 0,
   SCROLL: 1,
   RIGHT: 2,
@@ -20,14 +20,13 @@ class MouseHandler {
 
     if (mouse.state === MOUSE_STATE.CLICKED && mouse.button === BUTTON.LEFT) {
       if (mouse.selected.length > 0) {
-
         let resource = null;
         for (let r of game.resources) {
           let clickedAtBox = CollisionHandler.clickedInsideOfBox(
             mouse.downAt,
             r.box
           );
-          if(clickedAtBox){
+          if (clickedAtBox) {
             resource = r;
             break;
           }
@@ -59,18 +58,14 @@ class MouseHandler {
     mouse.state = MOUSE_STATE.CLICKED;
     mouse.button = event.button;
 
-    if(event.button === BUTTON.RIGHT){
+    if (event.button === BUTTON.RIGHT) {
       mouse.cancelSelection();
-      return;
-    }
+    } else if (event.button === BUTTON.LEFT) {
+      // UPDATE X Y BASED ON CANVAS
+      let rect = canvas.getBoundingClientRect();
+      let x = event.clientX - rect.left; //normalize inside of canvas
+      let y = event.clientY - rect.top; //normalize inside of canvas
 
-    // UPDATE X Y BASED ON CANVAS
-    let rect = canvas.getBoundingClientRect();
-    let x = event.clientX - rect.left; //normalize inside of canvas
-    let y = event.clientY - rect.top; //normalize inside of canvas
-
-    if (event.button === BUTTON.LEFT) {
-      // UPDATE DOWN AT MOUSE STATUS
       mouse.downAt = new Vector2D(x, y);
       mouse.selectionArea = {
         w: 0,
@@ -79,15 +74,13 @@ class MouseHandler {
         fy: 0,
       };
 
-      //
-    } 
-    
-    //
+      game.listeners.onMouseLeftClick(x, y);
+    }
   }
 
   onMouseMove(mouseEvent) {
     const mouse = game.mouse;
-    if(mouse.button === BUTTON.RIGHT){
+    if (mouse.button === BUTTON.RIGHT) {
       return;
     }
 
@@ -95,10 +88,10 @@ class MouseHandler {
     let x = mouseEvent.clientX - rect.left;
     let y = mouseEvent.clientY - rect.top;
     let dt = 9999;
-  
+
     mouse.pos = new Vector2D(x, y);
 
-    if (mouse.state === MOUSE_STATE.CLICKED && mouse.button ===  BUTTON.LEFT) {
+    if (mouse.state === MOUSE_STATE.CLICKED && mouse.button === BUTTON.LEFT) {
       const oldClickedPos = mouse.downAt.copy();
       oldClickedPos.sub(mouse.pos);
       dt = oldClickedPos.mag();

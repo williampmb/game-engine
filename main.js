@@ -5,10 +5,8 @@ canvas.width = 800;
 canvas.height = 600;
 
 const game = new Game();
+game.setup();
 
-document.addEventListener("mousedown", onMouseClick);
-
-function onMouseClick(event) {}
 
 let lastTime;
 let accumulator = 0;

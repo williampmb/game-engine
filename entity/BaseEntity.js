@@ -48,6 +48,29 @@ class BaseEntity {
       50
     );
   }
+  drawSprite(
+    _frameX,
+    _frameY,
+    _widthSrc,
+    _heightSrc,
+    _x,
+    _y,
+    _widthDest,
+    _heightDest
+  ) {
+   
+    ctx.drawImage(
+      this.img,
+      _frameX,
+      _frameY,
+      _widthSrc,
+      _heightSrc,
+      _x,
+      _y,
+      _widthDest,
+      _heightDest
+    );
+  }
 
   update() {}
 
@@ -57,7 +80,7 @@ class BaseEntity {
     let degree = this.velocity.direction();
 
     //
-    if (this.velocity.mag() ===0 || degree > 45 && degree < 135) {
+    if (this.velocity.mag() === 0 || (degree > 45 && degree < 135)) {
       this.heading = DIRECTION.DOWN;
     } else if (degree >= 135 && degree <= 235) {
       this.heading = DIRECTION.LEFT;
@@ -66,8 +89,21 @@ class BaseEntity {
     } else {
       this.heading = DIRECTION.UP;
     }
-
-    ctx.font = "30px Arial";
-    ctx.fillText("+ " + this.heading, 10, 50);
   }
+
+  isPointOver(x, y) {
+    let w2 = this.w;
+    let h2 = this.h;
+    let x2 = this.x;
+    let y2 = this.y;
+
+    if (x > x2
+        && x < x2 + w2
+        && y > y2
+        && y < y2 + h2) {
+        return true;
+    } else {
+        return false;
+    }
+}
 }

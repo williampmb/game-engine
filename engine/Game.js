@@ -1,17 +1,18 @@
 class Game {
   constructor() {
+
     this.debugMode = false;
     this.entities = [];
     this.resources = [];
     this.buildings = [];
-    this.fps =0;
+    this.fps = 0;
 
     this.mouse = new Mouse();
 
     this.gridSystem = new Grid(canvas.width, canvas.height);
 
-    this.setup();
   }
+
 
   draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -29,24 +30,26 @@ class Game {
     if (this.debugMode) {
       CollisionHandler.debug();
     }
-    
-    this.debug();
 
+    this.gui.draw();
+
+    this.debug();
   }
 
   update(dt) {
     if (!dt) return;
 
-
     this.entities.forEach((e) => {
       e.update();
     });
 
-    
     this.mouse.update();
   }
 
   setup() {
+    this.listeners = new ListenerHandler();
+    this.gui = new GUI();
+
     this.entities = [];
     this.resources = [];
     this.buildings = [];
@@ -66,7 +69,7 @@ class Game {
     this.buildings.push(storage);
 
     this.player = new Player(
-      canvas.width / 2,
+      canvas.width / 2 + 100,
       canvas.height / 2,
       50,
       50,
@@ -97,11 +100,22 @@ class Game {
       20,
       3
     );
-  //this.entities.push(this.player3);
+    //this.entities.push(this.player3);
   }
 
-  debug(){
+  registerMouseMove(e) {
+    this.listeners.registerMouseMove(e);
+  }
+
+  registerMouseLeftClick(e) {
+    this.listeners.registerMouseLeftClick(e);
+  }
+
+  registerMouseRightClick(e) {
+    this.listeners.registerMouseRightClick(e);
+  }
+  debug() {
     ctx.font = "14px Arial";
-    ctx.fillText('FPS: '+ parseInt(this.fps) , canvas.width -55, 30);
+    ctx.fillText("FPS: " + parseInt(this.fps), canvas.width - 55, 30);
   }
 }

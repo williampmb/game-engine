@@ -2,6 +2,7 @@ const MOUSE_STATE = {
   NORMAL: "NORMAL",
   SELECTING: "SELECTING",
   CLICKED: "CLICKED",
+  BUILDING: 'BUILDING'
 };
 
 class Mouse {
@@ -31,6 +32,7 @@ class Mouse {
     ctx.lineWidth = "5";
     ctx.strokeStyle = "green";
     ctx.strokeRect(this.pos.x, this.pos.y, selectWidth, selectHeigth);
+
   }
 
   update() {

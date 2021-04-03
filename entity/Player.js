@@ -2,8 +2,7 @@ class Player extends BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);
 
-    this.frameX = 0;
-    this.frameY = 0;
+    this.frame = 0;
     this.speed = 0.1;
     this.maxVelocity = 1;
 
@@ -19,6 +18,9 @@ class Player extends BaseEntity {
     this.capacity = 0;
     this.fullCapacity = 200;
     this.heading = DIRECTION.DOWN;
+    this.config = playerConfig;
+    
+    
   }
 
   amIFull() {
@@ -44,6 +46,7 @@ class Player extends BaseEntity {
   }
 
   update() {
+    this.direction();
     let distVect = this.distanceToTask();
     const dist = distVect.mag();
 
@@ -63,8 +66,6 @@ class Player extends BaseEntity {
       this.velocity.limit(this.maxVelocity);
       this.box.pos.add(this.velocity);
       this.pos.add(this.velocity);
-
-   
     } else if (this.action === ACTION.WOODCUTTING) {
       this.capacity++;
     } else if (this.action === ACTION.FIND_WAREHOUSE) {
@@ -76,40 +77,24 @@ class Player extends BaseEntity {
   }
 
   draw() {
-    switch (this.action) {
-      case ACTION.IDLE:
-        this.frameX = 0;
-        break;
-      case ACTION.WOODCUTTING:
-        this.frameY = 200;
-        break;
-      case ACTION.WALKING:
-        switch(this.heading){
-          case DIRECTION.UP:
-            this.frameY = 50;
-            break;
-          case DIRECTION.LEFT:
-            this.frameY = 150;
-            break;
-          case DIRECTION.RIGHT:
-            this.frameY = 100;
-            break;
-          case DIRECTION.DOWN:
-            this.frameY = 0;
-            break;
-        }
-        break;
-      case ACTION.FIND_WAREHOUSE:
-        this.frameY = 100;
-        break;
-      default:
-    }
+    let x = this.pos.x - this.w / 2;
+    let y = this.pos.y - this.h / 2;
 
-    super.draw();
+    //super.draw();
+    super.drawSprite(
+      this.config[this.action][this.heading][this.frame].x,
+      this.config[this.action][this.heading][this.frame].y,
+      this.config.w,
+      this.config.h,
+      x,
+      y,
+      this.config.w,
+      this.config.h
+    );
 
     if (this.count > this.numbFrame) {
-      this.frameX += 50;
-      this.frameX %= 200;
+      this.frame =
+        (this.frame + 1) % this.config[this.action][this.heading].length;
       this.count %= this.numbFrame;
     }
     this.count++;
@@ -118,8 +103,12 @@ class Player extends BaseEntity {
       ctx.font = "30px Arial";
       ctx.fillText("+ " + this.capacity, 10, 50);
     }
-    this.direction();
+
     //this.debug();
+    /* debug direction*/
+
+    ctx.font = "30px Arial";
+    ctx.fillText("+ " + this.heading, 10, 50);
   }
 
   findWarehouse() {
@@ -183,9 +172,7 @@ class Player extends BaseEntity {
     ctx.moveTo(curPos.x, curPos.y);
     ctx.lineTo(dirVel.x, dirVel.y);
     ctx.stroke();
-
   }
-
 
   calculateAcceleration(dist) {
     const acceleration = dist.copy();
@@ -207,3 +194,60 @@ class Player extends BaseEntity {
     return distance;
   }
 }
+
+const playerConfig = {
+  w: 50,
+  h: 50,
+  [ACTION.IDLE]: {
+    [DIRECTION.UP]: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    [DIRECTION.DOWN]: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    [DIRECTION.LEFT]: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    [DIRECTION.RIGHT]: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+  },
+  [ACTION.WALKING]: {
+    [DIRECTION.UP]: [
+      { x: 0, y: 50 },
+      { x: 50, y: 50 },
+      { x: 100, y: 50 },
+      { x: 150, y: 50 },
+    ],
+    [DIRECTION.RIGHT]: [
+      { x: 0, y: 100 },
+      { x: 50, y: 100 },
+      { x: 100, y: 100 },
+      { x: 150, y: 100 },
+    ],
+    [DIRECTION.DOWN]: [
+      { x: 0, y: 0 },
+      { x: 50, y: 0 },
+      { x: 100, y: 0 },
+      { x: 150, y: 0 },
+    ],
+    [DIRECTION.LEFT]: [
+      { x: 0, y: 150 },
+      { x: 50, y: 150 },
+      { x: 100, y: 150 },
+      { x: 150, y: 150 },
+    ],
+  },
+};
