@@ -26,17 +26,19 @@ class Player extends BaseEntity {
 
     game.registerMouseLeftClick(this);
   }
+
   constructBehaviorTree() {
     let hasCapacity = new HasCapacityNode(this);
 
     let findResource = new FindResourceNode(this);
     let moveTo = new MoveToNode(this);
     let gather = new GatherResourceNode(this);
+    let idle = new IdleNode(this);
 
-    let gatherSelector = new BTSelector(findResource, moveTo, gather);
+    let gatherSelector = new BTSelector(moveTo,findResource, gather);
 
     let workSequence = new BTSequence(hasCapacity,gatherSelector);
-    this.behavior = new BTSelector(workSequence);
+    this.behavior = new BTSelector(workSequence,idle);
   }
 
   amIFull() {
@@ -124,8 +126,8 @@ class Player extends BaseEntity {
     //this.debug();
     /* debug direction*/
 
-    ctx.font = "30px Arial";
-    ctx.fillText("+ " + this.heading, 10, 50);
+   // ctx.font = "30px Arial";
+    //ctx.fillText("+ " + this.heading, 10, 50);
   }
 
   moveTo(x, y) {

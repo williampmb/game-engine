@@ -5,6 +5,9 @@ class MoveToNode extends BTNode {
   }
 
   think() {
+    if (!this.npc.task) {
+      return BTNODE_STATUS.FAILURE;
+    }
     let task = this.npc.task;
     this.npc.moveTo(task.x, task.y);
     let distVect = this.npc.distanceToTask();

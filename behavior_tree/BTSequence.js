@@ -20,7 +20,7 @@ class BTSequence  extends BTNode {
           break;
         case BTNODE_STATUS.FAILURE:
           this._state = BTNODE_STATUS.FAILURE;
-          break;
+          return this._state;
         default:
           break;
       }

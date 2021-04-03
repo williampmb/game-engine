@@ -5,7 +5,7 @@ class HasCapacityNode extends BTNode {
   }
 
   think() {
-    return this.capacity < this.fullCapacity
+    return this.npc.capacity < this.npc.fullCapacity
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;
   }
