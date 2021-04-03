@@ -25,9 +25,15 @@ class ListenerHandler {
     if (mx < 0 || my < 0 || mx > canvas.width || my > canvas.height) return;
 
     let listener;
+    let found;
     for (listener of this.mouseLeftClick.values()) {
-      listener.mouseLeftClick(mx, my);
+      found = listener.mouseLeftClick(mx, my);
+      if(found){
+        found = listener;
+        break;
+      }
     }
+    return found;
   }
 
   onMouseRightClick(mx, my) {

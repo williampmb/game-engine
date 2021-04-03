@@ -19,8 +19,10 @@ class Player extends BaseEntity {
     this.fullCapacity = 200;
     this.heading = DIRECTION.DOWN;
     this.config = playerConfig;
+
+    this.kind = KIND.VILLAGE
     
-    
+    game.registerMouseLeftClick(this);
   }
 
   amIFull() {

@@ -2,7 +2,7 @@ const MOUSE_STATE = {
   NORMAL: "NORMAL",
   SELECTING: "SELECTING",
   CLICKED: "CLICKED",
-  BUILDING: 'BUILDING'
+  BUILDING: "BUILDING",
 };
 
 class Mouse {
@@ -10,7 +10,7 @@ class Mouse {
     this.pos = new Vector2D(0, 0);
     this.downAt = null;
     this.selectionArea = { w: 0, h: 0 };
-    this.selected = [];
+    this.selected = { entities: [], entityType: KIND.NONE };
 
     this.state = MOUSE_STATE.NORMAL;
     this.button = BUTTON.NORMAL;
@@ -22,7 +22,16 @@ class Mouse {
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, 2, 0, 2 * Math.PI);
     ctx.stroke();*/
-    this.selected.forEach((e) => e.box.draw());
+    this.selected.entities.forEach((e) => e.box.draw());
+    if (this.state === MOUSE_STATE.BUILDING) {
+      ctx.beginPath();
+      let side = 50;
+      ctx.rect(this.pos.x - side / 2, this.pos.y - side / 2, side, side);
+      ctx.fillStyle = "green";
+      ctx.fill();
+      ctx.stroke();
+      return;
+    }
 
     if (this.state !== MOUSE_STATE.SELECTING) return;
 
@@ -32,7 +41,6 @@ class Mouse {
     ctx.lineWidth = "5";
     ctx.strokeStyle = "green";
     ctx.strokeRect(this.pos.x, this.pos.y, selectWidth, selectHeigth);
-
   }
 
   update() {
@@ -46,12 +54,20 @@ class Mouse {
   }
 
   cancelSelection() {
-    this.selected = [];
+    this.selected = { entities: [], entityType: KIND.NONE };
+  }
+  resetStatus() {
+    this.selected = { entities: [], entityType: KIND.NONE };
+    this.state = MOUSE_STATE.NORMAL;
+  }
+
+  buildingMode() {
+    this.cancelSelection();
+    game.mouse.state = MOUSE_STATE.BUILDING;
   }
 
   selectedSingleEntity(e) {
-    this.selected = [];
-    this.selected.push(e);
+    this.selected = { entities: [e], entityType: e.kind };
   }
 
   selectingEntities() {
@@ -72,29 +88,28 @@ class Mouse {
         this.selectedTmp.push(e);
       }
     });
-    this.selected = this.selectedTmp;
+    this.selected.entities = this.selectedTmp;
   }
 
   passOrder(resource) {
-    // if (!resource) {
-    //   this.selected.forEach((e) => {
-    //     e.task = new Vector2D(this.downAt.x, this.downAt.y);
-    //   });
-
-    // }else if(resource.kind === TYPE.WOOD){
-    this.selected.forEach((e) => {
-      e.task = new Vector2D(this.downAt.x-15, this.downAt.y-10);
+    this.selected.entities.forEach((e) => {
       if (resource) {
-        console.log('New JOB', resource)
+        e.task = new Vector2D(this.downAt.x - 15, this.downAt.y - 10);
+        console.log("New JOB", resource);
         e.collect = resource;
         e.job = resource.job;
       } else {
-        console.log('No job')
+        e.task = new Vector2D(this.downAt.x, this.downAt.y);
+        console.log("No job");
         e.collect = null;
         e.job = null;
       }
     });
 
     //}
+  }
+
+  buildAt(x, y) {
+    game.createBuilding(x, y);
   }
 }

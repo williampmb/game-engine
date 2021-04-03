@@ -1,11 +1,15 @@
 class Tools {
-    constructor(x,y){
+    constructor(x,y,callback){
         
         this.w = 50;
         this.h = 50;
         this.x = 30;
         this.y = canvas.height - 80;
+        this.callback = callback;
+        this.kind = KIND.GUI;
     }
+
+
 
     draw(){
         ctx.beginPath();
@@ -18,15 +22,9 @@ class Tools {
 
     mouseLeftClick(mx,my){
         if(!this.isPointOver(mx,my)) return;
+     this.callback();
 
-        game.entities.push(new Player(  canvas.width / 2,
-            canvas.height / 2,
-            50,
-            50,
-            10,
-            3,
-            20,
-            3))
+     return true;
 
     }
 

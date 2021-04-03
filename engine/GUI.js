@@ -1,7 +1,11 @@
 class GUI {
   constructor() {
-    let tool = new Tools(1,1);
-    game.registerMouseLeftClick(tool)
+    let tool = new Tools(1, 1, () => {
+      console.log('BUILDING')
+      game.mouse.state = MOUSE_STATE.BUILDING;
+      game.mouse.cancelSelection();
+    });
+    game.registerMouseLeftClick(tool);
   }
 
   draw() {

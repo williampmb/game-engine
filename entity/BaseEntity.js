@@ -23,6 +23,14 @@ const DIRECTION = {
   LEFT: "LEFT",
 };
 
+const KIND = {
+  NONE: "NONE",
+  VILLAGE: "VILLAGE",
+  RESOURCE: "RESOURCE",
+  BUILDING: "BUILDING",
+  GUI:'GUI'
+};
+
 class BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     this.pos = new Vector2D(x, y);
@@ -33,6 +41,7 @@ class BaseEntity {
 
     this.box = new Box(x, y, w, h, ofx, ofy, sw, sh);
     this.heading = DIRECTION.DOWN;
+    this.kind = KIND.NONE;
   }
 
   draw() {
@@ -58,7 +67,6 @@ class BaseEntity {
     _widthDest,
     _heightDest
   ) {
-   
     ctx.drawImage(
       this.img,
       _frameX,
@@ -97,13 +105,15 @@ class BaseEntity {
     let x2 = this.x;
     let y2 = this.y;
 
-    if (x > x2
-        && x < x2 + w2
-        && y > y2
-        && y < y2 + h2) {
-        return true;
+    if (x > x2 && x < x2 + w2 && y > y2 && y < y2 + h2) {
+      return true;
     } else {
-        return false;
+      return false;
     }
-}
+  }
+
+  mouseLeftClick(mx, my) {
+    if (!this.isPointOver(mx, my)) return;
+    return true;
+  }
 }

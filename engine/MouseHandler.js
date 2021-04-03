@@ -7,64 +7,62 @@ const BUTTON = {
 
 const MIN_DIST_TO_SELECT = 20;
 
+function getClickedNormalized(event) {
+  let rect = canvas.getBoundingClientRect();
+  let x = event.clientX - rect.left; //normalize inside of canvas
+  let y = event.clientY - rect.top; //normalize inside of canvas
+
+  return { x, y };
+}
+
 class MouseHandler {
   constructor() {
     document.addEventListener("mousemove", this.onMouseMove);
     document.addEventListener("mousedown", this.onMouseDown);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("click", this.onMouseLeftClick);
   }
 
   onMouseUp(event) {
     const mouse = game.mouse;
+    let { x, y } = getClickedNormalized(event);
 
-    if (mouse.state === MOUSE_STATE.CLICKED && mouse.button === BUTTON.LEFT) {
-      if (mouse.selected.length > 0) {
-        let resource = null;
-        for (let r of game.resources) {
-          let clickedAtBox = CollisionHandler.clickedInsideOfBox(
-            mouse.downAt,
-            r.box
-          );
-          if (clickedAtBox) {
-            resource = r;
-            break;
-          }
-        }
-        mouse.passOrder(resource);
+    if (mouse.state === MOUSE_STATE.BUILDING) {
+      mouse.buildAt(x, y);
+    } else if (
+      mouse.state === MOUSE_STATE.CLICKED &&
+      mouse.button === BUTTON.LEFT
+    ) {
+      let clickedEntity = game.listeners.onMouseLeftClick(x, y);
+
+      if (clickedEntity && clickedEntity.kind === KIND.GUI) {
+      } else if (clickedEntity && clickedEntity.kind === KIND.VILLAGE) {
+        mouse.selectedSingleEntity(clickedEntity);
       } else {
-        let entities = game.entities;
-
-        for (let e of entities) {
-          let clickedAtBox = CollisionHandler.clickedInsideOfBox(
-            mouse.downAt,
-            e.box
-          );
-          if (clickedAtBox) {
-            mouse.selectedSingleEntity(e);
-            break;
-          }
-        }
+        mouse.passOrder(clickedEntity);
       }
     }
 
     mouse.downAt = null;
-    mouse.state = MOUSE_STATE.NORMAL;
+    mouse.state =
+      mouse.state === MOUSE_STATE.BUILDING
+        ? MOUSE_STATE.BUILDING
+        : MOUSE_STATE.NORMAL;
     mouse.button = BUTTON.NORMAL;
   }
 
   onMouseDown(event) {
     const mouse = game.mouse;
-    mouse.state = MOUSE_STATE.CLICKED;
+    mouse.state =
+      mouse.state === MOUSE_STATE.BUILDING ? mouse.state : MOUSE_STATE.CLICKED;
     mouse.button = event.button;
 
     if (event.button === BUTTON.RIGHT) {
-      mouse.cancelSelection();
+      mouse.resetStatus();
     } else if (event.button === BUTTON.LEFT) {
       // UPDATE X Y BASED ON CANVAS
-      let rect = canvas.getBoundingClientRect();
-      let x = event.clientX - rect.left; //normalize inside of canvas
-      let y = event.clientY - rect.top; //normalize inside of canvas
+      let { x, y } = getClickedNormalized(event);
 
       mouse.downAt = new Vector2D(x, y);
       mouse.selectionArea = {
@@ -73,8 +71,6 @@ class MouseHandler {
         fx: 0,
         fy: 0,
       };
-
-      game.listeners.onMouseLeftClick(x, y);
     }
   }
 
@@ -84,9 +80,7 @@ class MouseHandler {
       return;
     }
 
-    const rect = canvas.getBoundingClientRect();
-    let x = mouseEvent.clientX - rect.left;
-    let y = mouseEvent.clientY - rect.top;
+    let { x, y } = getClickedNormalized(event);
     let dt = 9999;
 
     mouse.pos = new Vector2D(x, y);

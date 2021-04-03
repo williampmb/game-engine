@@ -64,9 +64,7 @@ class Game {
 
     let x = Math.floor(Math.random() * 700 + 20);
     let y = Math.floor(Math.random() * 500 + 50);
-    let storage = new WareHouse(x, y, 50, 50, 18, 11, 36, 11);
-    this.entities.push(storage);
-    this.buildings.push(storage);
+  
 
     this.player = new Player(
       canvas.width / 2 + 100,
@@ -79,28 +77,12 @@ class Game {
       3
     );
     this.entities.push(this.player);
-    this.player2 = new Player(
-      100 + canvas.width / 2,
-      -200 + canvas.height / 2,
-      50,
-      50,
-      10,
-      3,
-      20,
-      3
-    );
-    //this.entities.push(this.player2);
-    this.player3 = new Player(
-      -100 + canvas.width / 2,
-      canvas.height / 2,
-      50,
-      50,
-      10,
-      3,
-      20,
-      3
-    );
-    //this.entities.push(this.player3);
+  }
+
+  createBuilding(mx,my){
+    let storage = new WareHouse(mx, my, 50, 50, 18, 11, 36, 11);
+    this.entities.push(storage);
+    this.buildings.push(storage);
   }
 
   registerMouseMove(e) {
