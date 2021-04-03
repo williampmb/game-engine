@@ -20,9 +20,23 @@ class Player extends BaseEntity {
     this.heading = DIRECTION.DOWN;
     this.config = playerConfig;
 
-    this.kind = KIND.VILLAGE
-    
+    this.kind = KIND.VILLAGE;
+
+    this.constructBehaviorTree();
+
     game.registerMouseLeftClick(this);
+  }
+  constructBehaviorTree() {
+    let hasCapacity = new HasCapacityNode(this);
+
+    let findResource = new FindResourceNode(this);
+    let moveTo = new MoveToNode(this);
+    let gather = new GatherResourceNode(this);
+
+    let gatherSelector = new BTSelector(findResource, moveTo, gather);
+
+    let workSequence = new BTSequence(hasCapacity,gatherSelector);
+    this.behavior = new BTSelector(workSequence);
   }
 
   amIFull() {
@@ -48,7 +62,8 @@ class Player extends BaseEntity {
   }
 
   update() {
-    this.direction();
+    this.behavior.think();
+    /*this.direction();
     let distVect = this.distanceToTask();
     const dist = distVect.mag();
 
@@ -75,7 +90,7 @@ class Player extends BaseEntity {
     } else if (this.action === ACTION.DROP_RESOURCE) {
       this.capacity = 0;
       this.task = this.findNextTask();
-    }
+    }*/
   }
 
   draw() {
@@ -111,6 +126,22 @@ class Player extends BaseEntity {
 
     ctx.font = "30px Arial";
     ctx.fillText("+ " + this.heading, 10, 50);
+  }
+
+  moveTo(x, y) {
+    this.direction();
+    let distVect = this.distanceTo(x, y);
+    const dist = distVect.mag();
+    this.acceleration = this.calculateAcceleration(distVect);
+
+    if (distVect.mag() < 1) {
+      this.velocity = new Vector2D(0, 0);
+      this.acceleration = new Vector2D(0, 0);
+    }
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(this.maxVelocity);
+    this.box.pos.add(this.velocity);
+    this.pos.add(this.velocity);
   }
 
   findWarehouse() {
@@ -195,6 +226,14 @@ class Player extends BaseEntity {
 
     return distance;
   }
+  distanceTo(x, y) {
+    let distance = new Vector2D(x, y);
+    const curPos = new Vector2D(this.pos.x, this.pos.y);
+
+    distance.sub(curPos);
+
+    return distance;
+  }
 }
 
 const playerConfig = {
@@ -224,6 +263,32 @@ const playerConfig = {
       { x: 0, y: 0 },
       { x: 0, y: 0 },
       { x: 0, y: 0 },
+    ],
+  },
+  [ACTION.WOODCUTTING]: {
+    [DIRECTION.UP]: [
+      { x: 0, y: 200 },
+      { x: 50, y: 200 },
+      { x: 100, y: 200 },
+      { x: 150, y: 200 },
+    ],
+    [DIRECTION.DOWN]: [
+      { x: 0, y: 200 },
+      { x: 50, y: 200 },
+      { x: 100, y: 200 },
+      { x: 150, y: 200 },
+    ],
+    [DIRECTION.LEFT]: [
+      { x: 0, y: 200 },
+      { x: 50, y: 200 },
+      { x: 100, y: 200 },
+      { x: 150, y: 200 },
+    ],
+    [DIRECTION.RIGHT]: [
+      { x: 0, y: 200 },
+      { x: 50, y: 200 },
+      { x: 100, y: 200 },
+      { x: 150, y: 200 },
     ],
   },
   [ACTION.WALKING]: {
