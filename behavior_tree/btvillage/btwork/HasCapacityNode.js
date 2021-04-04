@@ -1,11 +1,12 @@
 class HasCapacityNode extends BTNode {
-  constructor(npc) {
+  constructor(capacity,threshold) {
     super();
-    this.npc = npc;
+    this.capacity = capacity;
+    this.threshold = threshold;
   }
 
   think() {
-    return this.npc.capacity < this.npc.fullCapacity
+    return this.capacity < this.threshold
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;
   }

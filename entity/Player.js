@@ -6,7 +6,7 @@ class Player extends BaseEntity {
     this.speed = 0.1;
     this.maxVelocity = 1;
 
-    this.task = null;
+    this.task = { pos: null, kind: KIND.NONE };
     this.count = 0;
     this.numbFrame = 20;
 
@@ -28,17 +28,57 @@ class Player extends BaseEntity {
   }
 
   constructBehaviorTree() {
-    let hasCapacity = new HasCapacityNode(this);
+    // ----------------------------------------------
+    let closeToWarehouse = new IsCloseTo(this, KIND.BUILDING);
+    let hasAnyResource = new IsBagNotEmpty(this);
+    let drop = new DropResourceNode(this);
+    // ----------------------------------------------
+    let dropping = new BTSequence(closeToWarehouse, hasAnyResource, drop);
 
+    // ----------------------------------------------
+
+    let closeToResource = new IsCloseTo(this, KIND.RESOURCE);
+    let isFullCap = new HasCapacity(this);
+    let gather = new GatherResourceNode(this, ACTION.WOODCUTTING);
+
+    // ----------------------------------------------
+    let gathering = new BTSequence(closeToResource, isFullCap, gather);
+    // ----------------------------------------------
+
+    let hasTask = new HasTaskNode(this);
+    let closeToTask = new BTInverter(closeToResource);
+    let move = new MoveToNode(this);
+    // ----------------------------------------------
+    let moving = new BTSequence(hasTask, closeToTask, move);
+    // ----------------------------------------------
+
+    let isNotEmptyCap2 = new IsBagNotEmpty(this);
+    let findWarehouse = new FindWarehouseNode(this);
+    // ----------------------------------------------
+    let findWareHoseSequence = new BTSequence(isNotEmptyCap2, findWarehouse);
+    // ----------------------------------------------
+
+    let isFullCap2 = new HasCapacity(this);
     let findResource = new FindResourceNode(this);
-    let moveTo = new MoveToNode(this);
-    let gather = new GatherResourceNode(this);
+    // ----------------------------------------------
+
+    let findResourceSequence = new BTSequence(isFullCap2, findResource);
+
+    // ----------------------------------------------
+    let goToWork = new BTSelector(
+      dropping,
+      gathering,
+      moving,
+      findWareHoseSequence,
+      findResourceSequence
+    );
+    let hasJob = new HasJobNode(this);
+    // ----------------------------------------------
+    let workSequence = new BTSequence(hasJob, goToWork);
+    // ----------------------------------------------
     let idle = new IdleNode(this);
 
-    let gatherSelector = new BTSelector(moveTo,findResource, gather);
-
-    let workSequence = new BTSequence(hasCapacity,gatherSelector);
-    this.behavior = new BTSelector(workSequence,idle);
+    this.behavior = new BTSelector(workSequence,moving, idle);
   }
 
   amIFull() {
@@ -65,34 +105,6 @@ class Player extends BaseEntity {
 
   update() {
     this.behavior.think();
-    /*this.direction();
-    let distVect = this.distanceToTask();
-    const dist = distVect.mag();
-
-    this.action = this.think(dist);
-
-    if (
-      this.action === ACTION.WALKING ||
-      this.action === ACTION.CARRYING_WOOD
-    ) {
-      this.acceleration = this.calculateAcceleration(distVect);
-
-      if (distVect.mag() < 1) {
-        this.velocity = new Vector2D(0, 0);
-        this.acceleration = new Vector2D(0, 0);
-      }
-      this.velocity.add(this.acceleration);
-      this.velocity.limit(this.maxVelocity);
-      this.box.pos.add(this.velocity);
-      this.pos.add(this.velocity);
-    } else if (this.action === ACTION.WOODCUTTING) {
-      this.capacity++;
-    } else if (this.action === ACTION.FIND_WAREHOUSE) {
-      this.task = this.findWarehouse();
-    } else if (this.action === ACTION.DROP_RESOURCE) {
-      this.capacity = 0;
-      this.task = this.findNextTask();
-    }*/
   }
 
   draw() {
@@ -126,7 +138,7 @@ class Player extends BaseEntity {
     //this.debug();
     /* debug direction*/
 
-   // ctx.font = "30px Arial";
+    // ctx.font = "30px Arial";
     //ctx.fillText("+ " + this.heading, 10, 50);
   }
 
@@ -148,13 +160,28 @@ class Player extends BaseEntity {
 
   findWarehouse() {
     let building = game.buildings[0];
-    let task = new Vector2D(building.pos.x, building.pos.y);
+    let task = { pos: null, kind: KIND.NONE };
+    if (building) {
+      task = {
+        pos: new Vector2D(building.pos.x, building.pos.y),
+        kind: KIND.BUILDING,
+      };
+    }
+
     return task;
   }
 
   findNextTask() {
     let resource = game.resources[0];
-    let task = new Vector2D(resource.pos.x, resource.pos.y);
+
+    let task = { pos: null, kind: KIND.NONE };
+    if (resource) {
+      task = {
+        pos: new Vector2D(resource.pos.x, resource.pos.y),
+        kind: KIND.RESOURCE,
+      };
+    }
+
     return task;
   }
 
@@ -174,7 +201,7 @@ class Player extends BaseEntity {
   debug() {
     if (this.task !== null) {
       ctx.beginPath();
-      ctx.arc(this.task.x, this.task.y, 5, 0, 2 * Math.PI);
+      ctx.arc(this.task.pos.x, this.task.pos.y, 5, 0, 2 * Math.PI);
       ctx.stroke();
     }
 
@@ -221,7 +248,7 @@ class Player extends BaseEntity {
     if (this.task == null) {
       return new Vector2D(0, 0);
     }
-    let distance = new Vector2D(this.task.x, this.task.y);
+    let distance = new Vector2D(this.task.pos.x, this.task.pos.y);
     const curPos = new Vector2D(this.pos.x, this.pos.y);
 
     distance.sub(curPos);

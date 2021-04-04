@@ -17,5 +17,7 @@ class Tree extends BaseEntity{
         this.action = ACTION.IDLE;
         this.job = JOB.WOODCUTTING;
         this.kind = KIND.RESOURCE
+
+        game.registerMouseLeftClick(this);
     }
 }

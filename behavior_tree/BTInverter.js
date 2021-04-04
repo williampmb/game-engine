@@ -9,7 +9,7 @@ class BTInverter extends BTNode{
   }
 
   think() {
-    switch (child.think()) {
+    switch (this.node.think()) {
       case BTNODE_STATUS.RUNNING:
         this._state = BTNODE_STATUS.RUNNING;
         break;

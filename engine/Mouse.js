@@ -94,12 +94,12 @@ class Mouse {
   passOrder(resource) {
     this.selected.entities.forEach((e) => {
       if (resource) {
-        e.task = new Vector2D(this.downAt.x - 15, this.downAt.y - 10);
+        e.task = {pos:new Vector2D(this.downAt.x - 15, this.downAt.y - 10), kind: resource.kind};
         console.log("New JOB", resource);
         e.collect = resource;
         e.job = resource.job;
       } else {
-        e.task = new Vector2D(this.downAt.x, this.downAt.y);
+        e.task = {pos:new Vector2D(this.downAt.x, this.downAt.y), kind: KIND.NONE};
         console.log("No job");
         e.collect = null;
         e.job = null;

@@ -28,7 +28,7 @@ const KIND = {
   VILLAGE: "VILLAGE",
   RESOURCE: "RESOURCE",
   BUILDING: "BUILDING",
-  GUI:'GUI'
+  GUI: "GUI",
 };
 
 class BaseEntity {
@@ -56,6 +56,7 @@ class BaseEntity {
       50,
       50
     );
+    
   }
   drawSprite(
     _frameX,
@@ -102,8 +103,8 @@ class BaseEntity {
   isPointOver(x, y) {
     let w2 = this.w;
     let h2 = this.h;
-    let x2 = this.x;
-    let y2 = this.y;
+    let x2 = this.pos.x - this.w / 2;
+    let y2 = this.pos.y - this.h / 2;
 
     if (x > x2 && x < x2 + w2 && y > y2 && y < y2 + h2) {
       return true;
