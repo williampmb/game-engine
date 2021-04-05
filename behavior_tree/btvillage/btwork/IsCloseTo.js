@@ -1,14 +1,10 @@
 class IsCloseTo extends BTNode {
-  constructor(npc, kind) {
+  constructor(npc) {
     super();
     this.npc = npc;
-    this.kind = kind;
   }
 
   think() {
-    if (!this.npc.task || this.kind !== this.npc.task.kind) {
-      return BTNODE_STATUS.FAILURE;
-    }
 
     let nextPos = this.npc.task.pos;
 

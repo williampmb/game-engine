@@ -29,40 +29,52 @@ class Player extends BaseEntity {
 
   constructBehaviorTree() {
     // ----------------------------------------------
-    let closeToWarehouse = new IsCloseTo(this, KIND.BUILDING);
-    let hasAnyResource = new IsBagNotEmpty(this);
+    let hasTaskBuilding = new HasTaskNode(this, KIND.BUILDING);
+    let closeToWarehouse = new IsCloseTo(this);
+    let hasItemOnBag = new IsBagNotEmpty(this);
     let drop = new DropResourceNode(this);
     // ----------------------------------------------
-    let dropping = new BTSequence(closeToWarehouse, hasAnyResource, drop);
+    let dropping = new BTSequence(
+      hasTaskBuilding,
+      closeToWarehouse,
+      hasItemOnBag,
+      drop
+    );
 
     // ----------------------------------------------
 
-    let closeToResource = new IsCloseTo(this, KIND.RESOURCE);
+    let hasTaskResource = new HasTaskNode(this, KIND.RESOURCE);
+    let closeToResource = new IsCloseTo(this);
     let isFullCap = new HasCapacity(this);
     let gather = new GatherResourceNode(this, ACTION.WOODCUTTING);
 
     // ----------------------------------------------
-    let gathering = new BTSequence(closeToResource, isFullCap, gather);
+    let gathering = new BTSequence(
+      hasTaskResource,
+      closeToResource,
+      isFullCap,
+      gather
+    );
     // ----------------------------------------------
 
     let hasTask = new HasTaskNode(this);
-    let closeToTask = new BTInverter(closeToResource);
+    let closeToPos = new BTInverter(new IsCloseTo(this));
     let move = new MoveToNode(this);
     // ----------------------------------------------
-    let moving = new BTSequence(hasTask, closeToTask, move);
+    let moving = new BTSequence(hasTask, closeToPos, move);
     // ----------------------------------------------
 
-    let isNotEmptyCap2 = new IsBagNotEmpty(this);
+    //let isNotEmptyCap2 = new IsBagNotEmpty(this);
     let findWarehouse = new FindWarehouseNode(this);
     // ----------------------------------------------
-    let findWareHoseSequence = new BTSequence(isNotEmptyCap2, findWarehouse);
+    let findWareHoseSequence = new BTSequence(hasItemOnBag, findWarehouse);
     // ----------------------------------------------
 
-    let isFullCap2 = new HasCapacity(this);
+    //let isFullCap2 = new HasCapacity(this);
     let findResource = new FindResourceNode(this);
     // ----------------------------------------------
 
-    let findResourceSequence = new BTSequence(isFullCap2, findResource);
+    let findResourceSequence = new BTSequence(isFullCap, findResource);
 
     // ----------------------------------------------
     let goToWork = new BTSelector(
@@ -78,29 +90,7 @@ class Player extends BaseEntity {
     // ----------------------------------------------
     let idle = new IdleNode(this);
 
-    this.behavior = new BTSelector(workSequence,moving, idle);
-  }
-
-  amIFull() {
-    return this.capacity >= this.fullCapacity;
-  }
-
-  think(dist) {
-    const isFull = this.amIFull();
-
-    if (dist < 2 && this.action === ACTION.FIND_WAREHOUSE) {
-      return ACTION.DROP_RESOURCE;
-    } else if (dist < 2 && isFull && this.job !== null) {
-      return ACTION.FIND_WAREHOUSE;
-    } else if (dist < 2 && !isFull && this.job == JOB.WOODCUTTING) {
-      return ACTION.WOODCUTTING;
-    } else if (dist > 0 && isFull) {
-      return ACTION.CARRYING_WOOD;
-    } else if (dist > 1) {
-      return ACTION.WALKING;
-    } else {
-      return ACTION.IDLE;
-    }
+    this.behavior = new BTSelector(workSequence, moving, idle);
   }
 
   update() {
@@ -145,7 +135,7 @@ class Player extends BaseEntity {
   moveTo(x, y) {
     this.direction();
     let distVect = this.distanceTo(x, y);
-    const dist = distVect.mag();
+
     this.acceleration = this.calculateAcceleration(distVect);
 
     if (distVect.mag() < 1) {
@@ -183,19 +173,6 @@ class Player extends BaseEntity {
     }
 
     return task;
-  }
-
-  updateAction() {
-    const vel = this.velocity.mag();
-    if (this.fullCapacity <= this.capacity) {
-      this.action = ACTION.CARRYING_WOOD;
-    } else if (vel === 0 && this.job === JOB.WOODCUTTING) {
-      this.action = ACTION.WOODCUTTING;
-    } else if (this.velocity.mag() === 0) {
-      this.action = ACTION.IDLE;
-    } else {
-      this.action = ACTION.WALKING;
-    }
   }
 
   debug() {

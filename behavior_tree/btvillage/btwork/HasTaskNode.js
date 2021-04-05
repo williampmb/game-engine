@@ -1,10 +1,14 @@
 class HasTaskNode extends BTNode {
-  constructor(npc) {
+  constructor(npc, kind) {
     super();
     this.npc = npc;
+    this.kind = kind;
   }
 
   think() {
-    return this.npc.task.pos ? BTNODE_STATUS.SUCCESS : BTNODE_STATUS.FAILURE;
+    if (!this.npc.task || (this.kind && this.kind !== this.npc.task.kind) || !this.npc.task.pos) {
+      return BTNODE_STATUS.FAILURE;
+    }
+    return  BTNODE_STATUS.SUCCESS ;
   }
 }
