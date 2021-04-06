@@ -162,7 +162,12 @@ class Player extends BaseEntity {
   }
 
   findNextTask() {
-    let resource = game.resources[0];
+    let resource;
+    for (resource of game.resources) {
+      if (resource.job === this.job) {
+        break;
+      }
+    }
 
     let task = { pos: null, kind: KIND.NONE };
     if (resource) {

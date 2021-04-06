@@ -14,7 +14,7 @@ const TYPE = {
   BUILDING: "BUILDING",
 };
 
-const JOB = { IDLE: "IDLE", WOODCUTTING: "WOODCUTTING" };
+const JOB = { IDLE: "IDLE", WOODCUTTING: "WOODCUTTING", MINING: "MINING" };
 
 const DIRECTION = {
   DOWN: "DOWN",
@@ -56,7 +56,6 @@ class BaseEntity {
       50,
       50
     );
-    
   }
   drawSprite(
     _frameX,

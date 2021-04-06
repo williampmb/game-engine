@@ -60,6 +60,12 @@ class Game {
       let tree = new Tree(x, y, 50, 50, 18, 11, 36, 11);
       this.entities.push(tree);
       this.resources.push(tree);
+       x = Math.floor(Math.random() * 700 + 20);
+       y = Math.floor(Math.random() * 500 + 50);
+      let stone = new Stone(x, y, 50, 50, 18, 11, 36, 11);
+      this.entities.push(stone);
+      this.resources.push(stone);
+
     }
 
     let x = Math.floor(Math.random() * 700 + 20);
