@@ -2,9 +2,16 @@ class GUI {
   constructor() {
     let tool = new Tools(1, 1, () => {
     
-      game.mouse.buildingMode();
+      game.mouse.buildingMode(BUILDING.WAREHOUSE);
     });
+    let tool2 = new Tools(1, 1, () => {
+    
+      game.mouse.buildingMode(BUILDING.HOUSE);
+    });
+
+    
     game.registerMouseLeftClick(tool);
+    game.registerMouseLeftClick(tool2);
   }
 
   draw() {

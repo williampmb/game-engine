@@ -4,14 +4,17 @@ class Player extends BaseEntity {
 
     this.frame = 0;
     this.speed = 0.1;
+    this.speedWoodcuting = 200;
+    this.accumulatorWood = 0;
     this.maxVelocity = 1;
 
     this.task = { pos: null, kind: KIND.NONE };
+    this.newJob = { hasNewJob: false, resource: null, x: null, y: null };
     this.count = 0;
     this.numbFrame = 20;
 
     this.img = new Image();
-    this.img.src = "../resource/village2.png";
+    this.img.src = "../resource/peasant.png";
 
     this.action = ACTION.IDLE;
     this.job = null;
@@ -19,7 +22,7 @@ class Player extends BaseEntity {
     this.fullCapacity = 200;
     this.heading = DIRECTION.DOWN;
     this.config = playerConfig;
-
+    this.resource = null;
     this.kind = KIND.VILLAGE;
 
     this.constructBehaviorTree();
@@ -28,6 +31,21 @@ class Player extends BaseEntity {
   }
 
   constructBehaviorTree() {
+    // ----------------------------------------------
+    let hasTaskBuilding2 = new HasTaskNode(this, KIND.BUILDING);
+    let closeToWarehouse2 = new IsCloseTo(this);
+    let isInProgress = new BuildNode(this);
+    // ----------------------------------------------
+    let building = new BTSequence(
+      hasTaskBuilding2,
+      closeToWarehouse2,
+      isInProgress
+    );
+    //----------------------------------------------
+    let hasNewJob = new HasNewJob(this);
+    let assingnNewJob = new AssingNewJob(this);
+    // ----------------------------------------------
+    let assingNewJobSequence = new BTSequence(hasNewJob, assingnNewJob);
     // ----------------------------------------------
     let hasTaskBuilding = new HasTaskNode(this, KIND.BUILDING);
     let closeToWarehouse = new IsCloseTo(this);
@@ -78,6 +96,7 @@ class Player extends BaseEntity {
 
     // ----------------------------------------------
     let goToWork = new BTSelector(
+      building,
       dropping,
       gathering,
       moving,
@@ -90,7 +109,12 @@ class Player extends BaseEntity {
     // ----------------------------------------------
     let idle = new IdleNode(this);
 
-    this.behavior = new BTSelector(workSequence, moving, idle);
+    this.behavior = new BTSelector(
+      assingNewJobSequence,
+      workSequence,
+      moving,
+      idle
+    );
   }
 
   update() {
@@ -100,12 +124,12 @@ class Player extends BaseEntity {
   draw() {
     let x = this.pos.x - this.w / 2;
     let y = this.pos.y - this.h / 2;
-
     //super.draw();
+
     super.drawSprite(
-      this.config[this.action][this.heading][this.frame].x,
+      this.config[this.action][this.heading][this.frame].x - 1,
       this.config[this.action][this.heading][this.frame].y,
-      this.config.w,
+      this.config.w - 1,
       this.config.h,
       x,
       y,
@@ -130,6 +154,14 @@ class Player extends BaseEntity {
 
     // ctx.font = "30px Arial";
     //ctx.fillText("+ " + this.heading, 10, 50);
+  }
+
+  emit(event) {
+    if (event === ACTION.WOODCUTTING) {
+      game.addAnimation(
+        new Animation(ANIMATION.WOOD, this.pos.x, this.pos.y, 40)
+      );
+    }
   }
 
   moveTo(x, y) {
@@ -163,8 +195,10 @@ class Player extends BaseEntity {
 
   findNextTask() {
     let resource;
-    for (resource of game.resources) {
-      if (resource.job === this.job) {
+    let resources = game.resources;
+    for (let i in resources) {
+      if (resources[i].job === this.job) {
+        resource = resources[i].job;
         break;
       }
     }
@@ -248,8 +282,8 @@ class Player extends BaseEntity {
 }
 
 const playerConfig = {
-  w: 50,
-  h: 50,
+  w: 32,
+  h: 32,
   [ACTION.IDLE]: {
     [DIRECTION.UP]: [
       { x: 0, y: 0 },
@@ -278,54 +312,54 @@ const playerConfig = {
   },
   [ACTION.WOODCUTTING]: {
     [DIRECTION.UP]: [
-      { x: 0, y: 200 },
-      { x: 50, y: 200 },
-      { x: 100, y: 200 },
-      { x: 150, y: 200 },
-    ],
-    [DIRECTION.DOWN]: [
-      { x: 0, y: 200 },
-      { x: 50, y: 200 },
-      { x: 100, y: 200 },
-      { x: 150, y: 200 },
-    ],
-    [DIRECTION.LEFT]: [
-      { x: 0, y: 200 },
-      { x: 50, y: 200 },
-      { x: 100, y: 200 },
-      { x: 150, y: 200 },
+      { x: 0, y: 128 },
+      { x: 33, y: 128 },
+      { x: 65, y: 128 },
+      { x: 97, y: 128 },
     ],
     [DIRECTION.RIGHT]: [
-      { x: 0, y: 200 },
-      { x: 50, y: 200 },
-      { x: 100, y: 200 },
-      { x: 150, y: 200 },
+      { x: 0, y: 128 },
+      { x: 33, y: 128 },
+      { x: 65, y: 128 },
+      { x: 97, y: 128 },
+    ],
+    [DIRECTION.DOWN]: [
+      { x: 0, y: 128 },
+      { x: 33, y: 128 },
+      { x: 65, y: 128 },
+      { x: 97, y: 128 },
+    ],
+    [DIRECTION.LEFT]: [
+      { x: 0, y: 128 },
+      { x: 33, y: 128 },
+      { x: 65, y: 128 },
+      { x: 97, y: 128 },
     ],
   },
   [ACTION.WALKING]: {
     [DIRECTION.UP]: [
-      { x: 0, y: 50 },
-      { x: 50, y: 50 },
-      { x: 100, y: 50 },
-      { x: 150, y: 50 },
+      { x: 0, y: 32 },
+      { x: 32, y: 32 },
+      { x: 64, y: 32 },
+      { x: 96, y: 32 },
     ],
     [DIRECTION.RIGHT]: [
-      { x: 0, y: 100 },
-      { x: 50, y: 100 },
-      { x: 100, y: 100 },
-      { x: 150, y: 100 },
+      { x: 0, y: 64 },
+      { x: 32, y: 64 },
+      { x: 64, y: 64 },
+      { x: 96, y: 64 },
     ],
     [DIRECTION.DOWN]: [
       { x: 0, y: 0 },
-      { x: 50, y: 0 },
-      { x: 100, y: 0 },
-      { x: 150, y: 0 },
+      { x: 32, y: 0 },
+      { x: 64, y: 0 },
+      { x: 96, y: 0 },
     ],
     [DIRECTION.LEFT]: [
-      { x: 0, y: 150 },
-      { x: 50, y: 150 },
-      { x: 100, y: 150 },
-      { x: 150, y: 150 },
+      { x: 0, y: 96 },
+      { x: 32, y: 96 },
+      { x: 64, y: 96 },
+      { x: 96, y: 96 },
     ],
   },
 };

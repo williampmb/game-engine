@@ -1,18 +1,16 @@
 class Game {
   constructor() {
-
     this.debugMode = false;
     this.entities = [];
     this.resources = [];
     this.buildings = [];
+    this.animations = [];
     this.fps = 0;
 
     this.mouse = new Mouse();
 
     this.gridSystem = new Grid(canvas.width, canvas.height);
-
   }
-
 
   draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -23,6 +21,10 @@ class Game {
     // Door
     this.entities.forEach((e) => {
       e.draw();
+    });
+
+    this.animations.forEach((a) => {
+      a.draw();
     });
 
     this.mouse.draw();
@@ -43,6 +45,10 @@ class Game {
       e.update();
     });
 
+    this.animations.forEach((a) => {
+      a.update();
+    });
+
     this.mouse.update();
   }
 
@@ -60,18 +66,21 @@ class Game {
       let tree = new Tree(x, y, 50, 50, 18, 11, 36, 11);
       this.entities.push(tree);
       this.resources.push(tree);
-       x = Math.floor(Math.random() * 700 + 20);
-       y = Math.floor(Math.random() * 500 + 50);
+      x = Math.floor(Math.random() * 700 + 20);
+      y = Math.floor(Math.random() * 500 + 50);
       let stone = new Stone(x, y, 50, 50, 18, 11, 36, 11);
       this.entities.push(stone);
       this.resources.push(stone);
-
     }
 
     let x = Math.floor(Math.random() * 700 + 20);
     let y = Math.floor(Math.random() * 500 + 50);
-  
 
+    for (let numbTree = 0; numbTree < 1; numbTree++) {
+      let food = new Food(x, y, 32, 32, 0, 0, 0, 0);
+      this.entities.push(food);
+      this.resources.push(food);
+    }
     this.player = new Player(
       canvas.width / 2 + 100,
       canvas.height / 2,
@@ -85,7 +94,16 @@ class Game {
     this.entities.push(this.player);
   }
 
-  createBuilding(mx,my){
+  removeAnimation(animation) {
+    let indexAnimation = this.animations.indexOf(animation);
+    this.animations.splice(indexAnimation, 1);
+  }
+
+  addAnimation(animation) {
+    this.animations.push(animation);
+  }
+
+  createBuilding(mx, my) {
     let storage = new WareHouse(mx, my, 50, 50, 18, 11, 36, 11);
     this.entities.push(storage);
     this.buildings.push(storage);

@@ -40,7 +40,7 @@ class MouseHandler {
       } else if (clickedEntity && clickedEntity.kind === KIND.VILLAGE) {
         mouse.selectedSingleEntity(clickedEntity);
       } else {
-        mouse.passOrder(clickedEntity);
+        mouse.passOrder(clickedEntity, x, y);
       }
     }
 

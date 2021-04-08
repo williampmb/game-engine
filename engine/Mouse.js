@@ -22,7 +22,7 @@ class Mouse {
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, 2, 0, 2 * Math.PI);
     ctx.stroke();*/
-    this.selected.entities.forEach((e) => e.box.draw());
+    //this.selected.entities.forEach((e) => e.box.draw());
     if (this.state === MOUSE_STATE.BUILDING) {
       ctx.beginPath();
       let side = 50;
@@ -63,7 +63,7 @@ class Mouse {
 
   buildingMode() {
     this.cancelSelection();
-    game.mouse.state = MOUSE_STATE.BUILDING;
+    this.state = MOUSE_STATE.BUILDING;
   }
 
   selectedSingleEntity(e) {
@@ -91,19 +91,11 @@ class Mouse {
     this.selected.entities = this.selectedTmp;
   }
 
-  passOrder(resource) {
+  passOrder(resource, x, y) {
     this.selected.entities.forEach((e) => {
-      if (resource) {
-        e.task = {pos:new Vector2D(this.downAt.x - 15, this.downAt.y - 10), kind: resource.kind};
-        console.log("New JOB", resource);
-        e.collect = resource;
-        e.job = resource.job;
-      } else {
-        e.task = {pos:new Vector2D(this.downAt.x, this.downAt.y), kind: KIND.NONE};
-        console.log("No job");
-        e.collect = null;
-        e.job = null;
-      }
+      console.log("New JOB", resource);
+
+      e.newJob = { hasNewJob:true,resource, x, y };
     });
 
     //}

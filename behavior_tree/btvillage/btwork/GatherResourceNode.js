@@ -6,7 +6,13 @@ class GatherResourceNode extends BTNode {
   }
 
   think() {
-    this.npc.capacity++;
+    this.npc.accumulatorWood++;
+    if (this.npc.accumulatorWood >= this.npc.speedWoodcuting) {
+      this.npc.accumulatorWood = 0;
+      this.npc.emit(ACTION.WOODCUTTING);
+      this.npc.capacity++;
+    }
+
     this.npc.action = this.action;
     return BTNODE_STATUS.SUCCESS;
   }
