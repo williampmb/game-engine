@@ -1,3 +1,4 @@
+
 class Food extends BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);

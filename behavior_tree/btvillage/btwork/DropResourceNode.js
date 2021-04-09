@@ -5,6 +5,7 @@ class DropResourceNode extends BTNode {
   }
 
   think() {
+    game.addStorage(this.npc.resource.getMaterial(), 1);
     this.npc.capacity--;
     return BTNODE_STATUS.SUCCESS;
   }

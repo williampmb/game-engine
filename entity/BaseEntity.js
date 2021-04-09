@@ -48,15 +48,13 @@ class BaseEntity {
     this.h = h;
 
     this.box = new Box(x, y, w, h, ofx, ofy, sw, sh);
-    this.heading = DIRECTION.DOWN;
-    this.kind = KIND.NONE;
   }
 
   draw() {
     ctx.drawImage(
       this.img,
-      this.frameX,
-      this.frameY,
+      0,
+      0,
       50,
       50,
       this.pos.x - this.w / 2,

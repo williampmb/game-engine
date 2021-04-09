@@ -1,4 +1,4 @@
-class BTSequence  extends BTNode {
+class BTSequence extends BTNode {
   constructor(...nodes) {
     super();
     this.nodes = nodes;
@@ -9,13 +9,12 @@ class BTSequence  extends BTNode {
   }
 
   think() {
-    let isAnyChildRunning = false;
     let child;
     for (child of this.nodes) {
       switch (child.think()) {
         case BTNODE_STATUS.RUNNING:
-          isAnyChildRunning = true;
-          break;
+          this._state = BTNODE_STATUS.RUNNING;
+          return this._state;
         case BTNODE_STATUS.SUCCESS:
           break;
         case BTNODE_STATUS.FAILURE:
@@ -25,9 +24,7 @@ class BTSequence  extends BTNode {
           break;
       }
     }
-    this._state = isAnyChildRunning
-      ? BTNODE_STATUS.RUNNING
-      : BTNODE_STATUS.SUCCESS;
+    this._state = BTNODE_STATUS.SUCCESS;
     return this._state;
   }
 }

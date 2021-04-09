@@ -22,6 +22,10 @@ class Tree extends BaseEntity {
     game.registerMouseLeftClick(this);
   }
 
+  getMaterial(){
+    return RESOURCE.WOOD;
+  }
+
   draw() {
     super.draw();
     if (debugtree) {

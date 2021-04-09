@@ -41,7 +41,9 @@ class Block {
     }
 
     draw(){
+        let tmp = ctx.strokeStyle;
         ctx.strokeStyle = 'red';
         ctx.strokeRect(this.x,this.y,this.w,this.h);
+        ctx.strokeStyle = tmp;
     }
 }

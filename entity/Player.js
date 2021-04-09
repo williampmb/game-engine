@@ -19,7 +19,8 @@ class Player extends BaseEntity {
     this.action = ACTION.IDLE;
     this.job = null;
     this.capacity = 0;
-    this.fullCapacity = 200;
+    this.fullCapacity = 5;
+    this.capacityType = RESOURCE.WOOD;
     this.heading = DIRECTION.DOWN;
     this.config = playerConfig;
     this.resource = null;
@@ -145,8 +146,8 @@ class Player extends BaseEntity {
     this.count++;
 
     if (this.action === ACTION.WOODCUTTING) {
-      ctx.font = "30px Arial";
-      ctx.fillText("+ " + this.capacity, 10, 50);
+      ctx.font = "10px Arial";
+      ctx.fillText("+ " + this.capacity, this.pos.x-this.w, this.pos.y);
     }
 
     //this.debug();
@@ -198,7 +199,7 @@ class Player extends BaseEntity {
     let resources = game.resources;
     for (let i in resources) {
       if (resources[i].job === this.job) {
-        resource = resources[i].job;
+        resource = resources[i];
         break;
       }
     }

@@ -1,25 +1,20 @@
 class GUI {
   constructor() {
-    let tool = new Tools(1, 1, () => {
-    
+    let btn1 = new Tools(30, canvas.height - 80, 'WH',() => {
       game.mouse.buildingMode(BUILDING.WAREHOUSE);
     });
-    let tool2 = new Tools(1, 1, () => {
-    
+    let btn2 = new Tools(80, canvas.height - 80, 'H',() => {
       game.mouse.buildingMode(BUILDING.HOUSE);
     });
 
-    
-    game.registerMouseLeftClick(tool);
-    game.registerMouseLeftClick(tool2);
+    this.btns = [btn1, btn2];
+
+    game.registerMouseLeftClick(btn1);
+    game.registerMouseLeftClick(btn2);
   }
 
   draw() {
-    ctx.beginPath();
-
-    ctx.rect(30, canvas.height - 80, 50, 50);
-    ctx.fillStyle = "gray";
-    ctx.fill();
-    ctx.stroke();
+    this.btns.forEach((btn) => btn.draw());
+  
   }
 }

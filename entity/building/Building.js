@@ -1,21 +1,15 @@
-class WareHouse extends BaseEntity {
+const BUILDING = { NONE: 0, WAREHOUSE: 1, HOUSE: 2 };
+const BUILDING_STATUS = { IN_PROGRESS: 0, COMPLETE: 1 };
+class Building extends BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);
 
-    this.frameX = 0;
-    this.frameY = 0;
-    this.speed = 0.0;
-    this.maxVelocity = 0;
-    this.kind = KIND.BUILDING;
-    this.img = new Image();
-    this.img.src = "../resource/storage.png";
-
-    this.capacity = 0;
-
     this.buildingProgress = 0;
     this.construction = BUILDING_STATUS.IN_PROGRESS;
+  }
 
-    game.registerMouseLeftClick(this);
+  isCompleteBuilt() {
+    return this.buildingProgress > 99;
   }
 
   draw() {
@@ -44,11 +38,7 @@ class WareHouse extends BaseEntity {
     }
   }
 
-  getAvailablePosInJob() {
-    return [this.pos.x, this.pos.y];
-  }
-
-  buildComplete() {
+  onCompleteBuilding() {
     this.buildingProgress = 100;
     this.construction = BUILDING_STATUS.COMPLETE;
   }

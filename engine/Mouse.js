@@ -14,6 +14,7 @@ class Mouse {
 
     this.state = MOUSE_STATE.NORMAL;
     this.button = BUTTON.NORMAL;
+    this.buildOpt = BUILDING.NONE;
     this.startListeners();
   }
 
@@ -61,9 +62,10 @@ class Mouse {
     this.state = MOUSE_STATE.NORMAL;
   }
 
-  buildingMode() {
+  buildingMode(buildOpt) {
     this.cancelSelection();
     this.state = MOUSE_STATE.BUILDING;
+    this.buildOpt = buildOpt;
   }
 
   selectedSingleEntity(e) {
@@ -95,13 +97,14 @@ class Mouse {
     this.selected.entities.forEach((e) => {
       console.log("New JOB", resource);
 
-      e.newJob = { hasNewJob:true,resource, x, y };
+      e.newJob = { hasNewJob: true, resource, x, y };
     });
 
     //}
   }
 
   buildAt(x, y) {
-    game.createBuilding(x, y);
+    console.log("Opt mouse ", this.buildOpt);
+    game.createBuilding(x, y, this.buildOpt);
   }
 }

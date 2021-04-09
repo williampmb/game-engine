@@ -11,7 +11,7 @@ class BuildNode extends BTNode {
     this.npc.resource.buildingProgress++;
 
     if(this.npc.resource.buildingProgress>99){
-      this.npc.resource.buildComplete();
+      this.npc.resource.onCompleteBuilding();
     }
 
     return BTNODE_STATUS.SUCCESS;
