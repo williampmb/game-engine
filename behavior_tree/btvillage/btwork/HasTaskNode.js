@@ -1,12 +1,13 @@
 class HasTaskNode extends BTNode {
-  constructor(npc, kind) {
+  constructor( kind) {
     super();
-    this.npc = npc;
     this.kind = kind;
   }
 
   think() {
-    if (!this.npc.task || (this.kind && this.kind !== this.npc.task.kind) || !this.npc.task.pos) {
+    const actor = game.peasantBehavior.getActor();
+
+    if (!actor.task || (this.kind && this.kind !== actor.task.kind) || !actor.task.pos) {
       return BTNODE_STATUS.FAILURE;
     }
     return  BTNODE_STATUS.SUCCESS ;

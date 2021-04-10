@@ -1,19 +1,20 @@
 class FindResourceNode extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    if (this.npc.task.kind === KIND.RESOURCE) {
+    const actor = game.peasantBehavior.getActor();
+
+    if (actor.task.kind === KIND.RESOURCE) {
       return BTNODE_STATUS.FAILURE;
     }
 
-    let task = this.npc.findNextTask();
+    let task = actor.findNextTask();
     if (!task.pos) {
       return BTNODE_STATUS.FAILURE;
     }
-    this.npc.task = task;
+    actor.task = task;
     return BTNODE_STATUS.SUCCESS;
   }
 }

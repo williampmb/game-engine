@@ -6,6 +6,7 @@ class HasCapacityNode extends BTNode {
   }
 
   think() {
+    
     return this.capacity < this.threshold
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;

@@ -1,17 +1,18 @@
 class BuildNode extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    if (this.npc.resource.construction !== BUILDING_STATUS.IN_PROGRESS) {
+    const actor = game.peasantBehavior.getActor();
+
+    if (actor.resource.construction !== BUILDING_STATUS.IN_PROGRESS) {
       return BTNODE_STATUS.FAILURE;
     }
-    this.npc.resource.buildingProgress++;
+    actor.resource.buildingProgress++;
 
-    if(this.npc.resource.buildingProgress>99){
-      this.npc.resource.onCompleteBuilding();
+    if (actor.resource.buildingProgress > 99) {
+      actor.resource.onCompleteBuilding();
     }
 
     return BTNODE_STATUS.SUCCESS;

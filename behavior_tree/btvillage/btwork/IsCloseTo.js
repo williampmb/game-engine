@@ -1,14 +1,14 @@
 class IsCloseTo extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
+    const actor = game.peasantBehavior.getActor();
 
-    let nextPos = this.npc.task.pos;
+    let nextPos = actor.task.pos;
 
-    let cur = new Vector2D(this.npc.pos.x, this.npc.pos.y);
+    let cur = new Vector2D(actor.pos.x, actor.pos.y);
     let tar = new Vector2D(nextPos.x, nextPos.y);
 
     cur.sub(tar);

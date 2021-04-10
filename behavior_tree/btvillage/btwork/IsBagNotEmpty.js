@@ -1,11 +1,12 @@
 class IsBagNotEmpty extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    return this.npc.capacity > 0
+    const actor = game.peasantBehavior.getActor();
+
+    return actor.capacity > 0
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;
   }

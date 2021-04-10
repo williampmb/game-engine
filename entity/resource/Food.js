@@ -1,5 +1,5 @@
 
-class Food extends BaseEntity {
+class Food extends Resource {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);
     
@@ -33,6 +33,10 @@ class Food extends BaseEntity {
         32,
         32
       );
+  }
+
+  getMaterial(){
+    return RESOURCE.FOOD;
   }
 
 }

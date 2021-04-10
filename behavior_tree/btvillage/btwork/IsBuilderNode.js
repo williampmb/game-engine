@@ -1,4 +1,4 @@
-class HasJobNode extends BTNode {
+class IsBuilderNode extends BTNode {
   constructor() {
     super();
   }
@@ -6,9 +6,7 @@ class HasJobNode extends BTNode {
   think() {
     const actor = game.peasantBehavior.getActor();
 
-    if (actor.job) {
-      return BTNODE_STATUS.SUCCESS;
-    }
+    if (actor.job === JOB.BUILDING) return BTNODE_STATUS.SUCCESS;
 
     return BTNODE_STATUS.FAILURE;
   }

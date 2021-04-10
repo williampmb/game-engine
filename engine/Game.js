@@ -1,6 +1,6 @@
 const REQUIRED_RESOURCE = {
   [BUILDING.WAREHOUSE]: { [RESOURCE.WOOD]: 5 },
-  [BUILDING.HOUSE]: {},
+  [BUILDING.HOUSE]: { [RESOURCE.WOOD]: 10, [RESOURCE.STONE]: 4 },
 };
 
 class Game {
@@ -11,9 +11,11 @@ class Game {
     this.buildings = [];
     this.animations = [];
     this.fps = 0;
-    this.storage = { [RESOURCE.WOOD]: 5, [RESOURCE.STONE]: 0 };
+    this.storage = { [RESOURCE.WOOD]: 15,  };
 
     this.mouse = new Mouse();
+
+    this.peasantBehavior = this.constructBehaviorTree();
 
     this.gridSystem = new Grid(canvas.width, canvas.height);
   }
@@ -103,6 +105,18 @@ class Game {
     this.entities.push(this.player);
   }
 
+  findBuildingInProgress() {
+    let building;
+    for (let b of this.buildings) {
+      if (b.construction === BUILDING_STATUS.IN_PROGRESS) {
+        building = b;
+        break;
+      }
+    }
+
+    return building;
+  }
+
   drawGameStatus() {
     let x = 10,
       y = 30,
@@ -167,22 +181,17 @@ class Game {
     this.entities.push(newBuilding);
     this.buildings.push(newBuilding);
   }
+
   addStorage(material, unit) {
+    if(!this.storage[material]){
+      this.storage[material] =0;
+    }
     this.storage[material] += unit;
   }
 
   addNewPeasant(x, y) {
-    let newPeasant = new Player(
-      x+50,
-      y+50,
-      50,
-      50,
-      10,
-      3,
-      20,
-      3
-    );
-    game.entities.push(newPeasant)
+    let newPeasant = new Player(x + 50, y + 50, 50, 50, 10, 3, 20, 3);
+    game.entities.push(newPeasant);
   }
 
   registerMouseMove(e) {
@@ -200,5 +209,100 @@ class Game {
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
     ctx.fillText("FPS: " + parseInt(this.fps), canvas.width - 55, 30);
+  }
+
+  constructBehaviorTree() {
+    // ----------------------------------------------
+    let isABuilder = new IsBuilderNode("Builder Job Check");
+    let hasTaskBuilding2 = new HasTaskNode(KIND.BUILDING);
+    let closeToWarehouse2 = new IsCloseTo();
+    let build = new BuildNode();
+
+    // ----------------------------------------------
+    // ----------------------------------------------
+    let builder = new BTSequence(
+      isABuilder,
+      hasTaskBuilding2,
+      closeToWarehouse2,
+      build
+    );
+    //----------------------------------------------
+    let hasNewJob = new HasNewJob();
+    let assingnNewJob = new AssingNewJob();
+    // ----------------------------------------------
+    let assingNewJobSequence = new BTSequence(hasNewJob, assingnNewJob);
+    // ----------------------------------------------
+    let hasTaskBuilding = new HasTaskNode(KIND.BUILDING);
+    let closeToWarehouse = new IsCloseTo();
+    let hasItemOnBag = new IsBagNotEmpty();
+    let drop = new DropResourceNode();
+    // ----------------------------------------------
+    let dropping = new BTSequence(
+      hasTaskBuilding,
+      closeToWarehouse,
+      hasItemOnBag,
+      drop
+    );
+
+    // ----------------------------------------------
+
+    let hasTaskResource = new HasTaskNode(KIND.RESOURCE);
+    let closeToResource = new IsCloseTo();
+    let isFullCap = new HasCapacity();
+    let gather = new GatherResourceNode(ACTION.WOODCUTTING);
+
+    // ----------------------------------------------
+    let gathering = new BTSequence(
+      hasTaskResource,
+      closeToResource,
+      isFullCap,
+      gather
+    );
+    // ----------------------------------------------
+
+    let hasTask = new HasTaskNode();
+    let closeToPos = new BTInverter(new IsCloseTo());
+    let move = new MoveToNode();
+    // ----------------------------------------------
+    let moving = new BTSequence(hasTask, closeToPos, move);
+    // ----------------------------------------------
+
+    let findWarehouse = new FindWarehouseNode();
+    // ----------------------------------------------
+    let findWareHoseSequence = new BTSequence(hasItemOnBag, findWarehouse);
+    // ----------------------------------------------
+
+    let findResource = new FindResourceNode();
+    // ----------------------------------------------
+
+    let findResourceSequence = new BTSequence(isFullCap, findResource);
+
+    // ----------------------------------------------
+    let findNextBuildInProgress = new FindBuildingInProgress();
+    // ----------------------------------------------
+    let findBuildingInProgressSequence = new BTSequence(
+      isABuilder,
+      findNextBuildInProgress
+    );
+    // ----------------------------------------------
+    let goToWork = new BTSelector(
+      builder,
+      dropping,
+      gathering,
+      moving,
+      findWareHoseSequence,
+      findResourceSequence,
+      findBuildingInProgressSequence
+    );
+    let hasJob = new HasJobNode();
+    // ----------------------------------------------
+    let workSequence = new BTSequence(hasJob, goToWork);
+    // ----------------------------------------------
+    let idle = new IdleNode();
+
+    let root = new BTSelector(assingNewJobSequence, workSequence, moving, idle);
+
+    const peasantBrain = new BehaviorTree(root);
+    return peasantBrain;
   }
 }

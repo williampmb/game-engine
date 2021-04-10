@@ -1,16 +1,14 @@
 class MoveToNode extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    let task = this.npc.task.pos;
-    this.npc.moveTo(task.x, task.y);
-    // let distVect = this.npc.distanceToTask();
-    // const dist = distVect.mag();
-    this.npc.action = ACTION.WALKING;
-    //return dist < 1 ? BTNODE_STATUS.FAILURE : BTNODE_STATUS.RUNNING;
+    const actor = game.peasantBehavior.getActor();
+
+    let task = actor.task.pos;
+    actor.moveTo(task.x, task.y);
+    actor.action = ACTION.WALKING;
     return BTNODE_STATUS.RUNNING;
   }
 }

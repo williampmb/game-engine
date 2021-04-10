@@ -1,11 +1,12 @@
 class AssingNewJob extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    let newJob = this.npc.newJob;
+    const actor = game.peasantBehavior.getActor();
+
+    let newJob = actor.newJob;
 
     let x = newJob.x,
       y = newJob.y;
@@ -23,15 +24,15 @@ class AssingNewJob extends BTNode {
       [x, y] = resource.getAvailablePosInJob();
     }
 
-    this.npc.task = {
+    actor.task = {
       pos: new Vector2D(x, y),
       kind,
     };
 
-    this.npc.job = job;
-    this.npc.newJob = { hasNewJob: false, resource: null, x, y };
-    this.npc.resource = resource;
+    actor.job = job;
+    actor.newJob = { hasNewJob: false, resource: null, x, y };
+    actor.resource = resource;
 
-    return this.npc.hasNewJob ? BTNODE_STATUS.SUCCESS : BTNODE_STATUS.FAILURE;
+    return actor.hasNewJob ? BTNODE_STATUS.SUCCESS : BTNODE_STATUS.FAILURE;
   }
 }

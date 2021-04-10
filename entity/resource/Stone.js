@@ -1,4 +1,4 @@
-class Stone extends BaseEntity {
+class Stone extends Resource {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);
 
@@ -21,7 +21,7 @@ class Stone extends BaseEntity {
     game.registerMouseLeftClick(this);
   }
 
-  getAvailablePosInJob() {
-    return [this.pos.x, this.pos.y];
+  getMaterial() {
+    return RESOURCE.STONE;
   }
 }

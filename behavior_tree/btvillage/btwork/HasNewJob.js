@@ -1,10 +1,11 @@
 class HasNewJob extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    return this.npc.newJob.hasNewJob ? BTNODE_STATUS.SUCCESS : BTNODE_STATUS.FAILURE;
+    const actor = game.peasantBehavior.getActor();
+
+    return actor.newJob.hasNewJob ? BTNODE_STATUS.SUCCESS : BTNODE_STATUS.FAILURE;
   }
 }

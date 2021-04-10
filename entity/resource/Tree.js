@@ -1,5 +1,5 @@
 const debugtree = true;
-class Tree extends BaseEntity {
+class Tree extends Resource {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);
 
@@ -22,7 +22,7 @@ class Tree extends BaseEntity {
     game.registerMouseLeftClick(this);
   }
 
-  getMaterial(){
+  getMaterial() {
     return RESOURCE.WOOD;
   }
 
@@ -38,9 +38,5 @@ class Tree extends BaseEntity {
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, 2 * Math.PI);
     ctx.stroke();
-  }
-
-  getAvailablePosInJob() {
-    return [this.pos.x, this.pos.y];
   }
 }

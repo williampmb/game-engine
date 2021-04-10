@@ -1,11 +1,12 @@
 class HasCapacity extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc = npc;
   }
 
   think() {
-    return this.npc.capacity < this.npc.fullCapacity
+    const actor = game.peasantBehavior.getActor();
+
+    return actor.capacity < actor.fullCapacity
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;
   }

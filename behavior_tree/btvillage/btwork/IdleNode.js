@@ -1,11 +1,11 @@
 class IdleNode extends BTNode {
-  constructor(npc) {
+  constructor() {
     super();
-    this.npc =npc;
   }
 
   think() {
-    this.npc.action = ACTION.IDLE;
+    const actor = game.peasantBehavior.getActor();
+    actor.action = ACTION.IDLE;
     return BTNODE_STATUS.SUCCESS;
   }
 }

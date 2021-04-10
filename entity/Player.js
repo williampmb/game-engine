@@ -26,106 +26,18 @@ class Player extends BaseEntity {
     this.resource = null;
     this.kind = KIND.VILLAGE;
 
-    this.constructBehaviorTree();
-
     game.registerMouseLeftClick(this);
   }
 
-  constructBehaviorTree() {
-    // ----------------------------------------------
-    let hasTaskBuilding2 = new HasTaskNode(this, KIND.BUILDING);
-    let closeToWarehouse2 = new IsCloseTo(this);
-    let isInProgress = new BuildNode(this);
-    // ----------------------------------------------
-    let building = new BTSequence(
-      hasTaskBuilding2,
-      closeToWarehouse2,
-      isInProgress
-    );
-    //----------------------------------------------
-    let hasNewJob = new HasNewJob(this);
-    let assingnNewJob = new AssingNewJob(this);
-    // ----------------------------------------------
-    let assingNewJobSequence = new BTSequence(hasNewJob, assingnNewJob);
-    // ----------------------------------------------
-    let hasTaskBuilding = new HasTaskNode(this, KIND.BUILDING);
-    let closeToWarehouse = new IsCloseTo(this);
-    let hasItemOnBag = new IsBagNotEmpty(this);
-    let drop = new DropResourceNode(this);
-    // ----------------------------------------------
-    let dropping = new BTSequence(
-      hasTaskBuilding,
-      closeToWarehouse,
-      hasItemOnBag,
-      drop
-    );
-
-    // ----------------------------------------------
-
-    let hasTaskResource = new HasTaskNode(this, KIND.RESOURCE);
-    let closeToResource = new IsCloseTo(this);
-    let isFullCap = new HasCapacity(this);
-    let gather = new GatherResourceNode(this, ACTION.WOODCUTTING);
-
-    // ----------------------------------------------
-    let gathering = new BTSequence(
-      hasTaskResource,
-      closeToResource,
-      isFullCap,
-      gather
-    );
-    // ----------------------------------------------
-
-    let hasTask = new HasTaskNode(this);
-    let closeToPos = new BTInverter(new IsCloseTo(this));
-    let move = new MoveToNode(this);
-    // ----------------------------------------------
-    let moving = new BTSequence(hasTask, closeToPos, move);
-    // ----------------------------------------------
-
-    //let isNotEmptyCap2 = new IsBagNotEmpty(this);
-    let findWarehouse = new FindWarehouseNode(this);
-    // ----------------------------------------------
-    let findWareHoseSequence = new BTSequence(hasItemOnBag, findWarehouse);
-    // ----------------------------------------------
-
-    //let isFullCap2 = new HasCapacity(this);
-    let findResource = new FindResourceNode(this);
-    // ----------------------------------------------
-
-    let findResourceSequence = new BTSequence(isFullCap, findResource);
-
-    // ----------------------------------------------
-    let goToWork = new BTSelector(
-      building,
-      dropping,
-      gathering,
-      moving,
-      findWareHoseSequence,
-      findResourceSequence
-    );
-    let hasJob = new HasJobNode(this);
-    // ----------------------------------------------
-    let workSequence = new BTSequence(hasJob, goToWork);
-    // ----------------------------------------------
-    let idle = new IdleNode(this);
-
-    this.behavior = new BTSelector(
-      assingNewJobSequence,
-      workSequence,
-      moving,
-      idle
-    );
-  }
+  
 
   update() {
-    this.behavior.think();
+    game.peasantBehavior.process(this);
   }
 
   draw() {
     let x = this.pos.x - this.w / 2;
     let y = this.pos.y - this.h / 2;
-    //super.draw();
 
     super.drawSprite(
       this.config[this.action][this.heading][this.frame].x - 1,
@@ -147,7 +59,7 @@ class Player extends BaseEntity {
 
     if (this.action === ACTION.WOODCUTTING) {
       ctx.font = "10px Arial";
-      ctx.fillText("+ " + this.capacity, this.pos.x-this.w, this.pos.y);
+      ctx.fillText("+ " + this.capacity, this.pos.x - this.w, this.pos.y);
     }
 
     //this.debug();
@@ -188,6 +100,18 @@ class Player extends BaseEntity {
       task = {
         pos: new Vector2D(building.pos.x, building.pos.y),
         kind: KIND.BUILDING,
+      };
+    }
+
+    return task;
+  }
+
+  generateTask(target) {
+    let task = { pos: null, kind: KIND.NONE };
+    if (target) {
+      task = {
+        pos: new Vector2D(target.pos.x, target.pos.y),
+        kind: target.kind,
       };
     }
 
