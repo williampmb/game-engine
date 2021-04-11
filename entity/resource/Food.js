@@ -16,7 +16,7 @@ class Food extends Resource {
     this.img.src = "../resource/berries.png";
 
     this.action = ACTION.IDLE;
-    this.job = JOB.HAVESTING;
+    this.job = JOB.HAVESTER;
     this.kind = KIND.RESOURCE;
 
     game.registerMouseLeftClick(this);

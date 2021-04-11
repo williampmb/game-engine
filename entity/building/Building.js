@@ -1,5 +1,12 @@
-const BUILDING = { NONE: 0, WAREHOUSE: 1, HOUSE: 2 };
+const BUILDING = { NONE: 0, WAREHOUSE: 1, HOUSE: 2, SAWMILL: 3 };
 const BUILDING_STATUS = { IN_PROGRESS: 0, COMPLETE: 1 };
+const REQUIRED_RESOURCE = {
+  [BUILDING.WAREHOUSE]: { [RESOURCE.WOOD]: 5 },
+  [BUILDING.HOUSE]: { [RESOURCE.WOOD]: 10, [RESOURCE.STONE]: 4 },
+  [BUILDING.SAWMILL]: {},
+  [RESOURCE.PLAN]: { [RESOURCE.WOOD]: 3 },
+};
+
 class Building extends BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
     super(x, y, w, h, ofx, ofy, sw, sh);

@@ -16,7 +16,7 @@ class Tree extends Resource {
     this.img.src = "../resource/tree.png";
 
     this.action = ACTION.IDLE;
-    this.job = JOB.WOODCUTTING;
+    this.job = JOB.WOODCUTER;
     this.kind = KIND.RESOURCE;
 
     game.registerMouseLeftClick(this);

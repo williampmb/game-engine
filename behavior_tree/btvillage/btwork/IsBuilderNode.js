@@ -6,7 +6,7 @@ class IsBuilderNode extends BTNode {
   think() {
     const actor = game.peasantBehavior.getActor();
 
-    if (actor.job === JOB.BUILDING) return BTNODE_STATUS.SUCCESS;
+    if (actor.job === JOB.BUILDER) return BTNODE_STATUS.SUCCESS;
 
     return BTNODE_STATUS.FAILURE;
   }

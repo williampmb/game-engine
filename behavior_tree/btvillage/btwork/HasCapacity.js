@@ -6,7 +6,7 @@ class HasCapacity extends BTNode {
   think() {
     const actor = game.peasantBehavior.getActor();
 
-    return actor.capacity < actor.fullCapacity
+    return actor.bag.items.length < actor.bag.full
       ? BTNODE_STATUS.SUCCESS
       : BTNODE_STATUS.FAILURE;
   }

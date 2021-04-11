@@ -2,6 +2,7 @@ const RESOURCE = {
   WOOD: "wood",
   STONE: "stone",
   FOOD: "food",
+  PLANK: "plank",
 };
 
 class Resource extends BaseEntity {

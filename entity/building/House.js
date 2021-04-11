@@ -3,7 +3,7 @@ class House extends Building {
     super(x, y, w, h, ofx, ofy, sw, sh);
     this.kind = KIND.BUILDING;
     this.img = new Image();
-    this.img.src = "../resource/storage.png";
+    this.img.src = "../resource/house.png";
     console.log("HOUSE");
     game.registerMouseLeftClick(this);
   }

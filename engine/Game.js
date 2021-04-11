@@ -1,7 +1,3 @@
-const REQUIRED_RESOURCE = {
-  [BUILDING.WAREHOUSE]: { [RESOURCE.WOOD]: 5 },
-  [BUILDING.HOUSE]: { [RESOURCE.WOOD]: 10, [RESOURCE.STONE]: 4 },
-};
 
 class Game {
   constructor() {
@@ -10,8 +6,9 @@ class Game {
     this.resources = [];
     this.buildings = [];
     this.animations = [];
+    this.resourcesNeeded = [];
     this.fps = 0;
-    this.storage = { [RESOURCE.WOOD]: 15,  };
+    this.storage = { [RESOURCE.WOOD]: 15 };
 
     this.mouse = new Mouse();
 
@@ -92,16 +89,7 @@ class Game {
       this.entities.push(food);
       this.resources.push(food);
     }
-    this.player = new Player(
-      canvas.width / 2 + 100,
-      canvas.height / 2,
-      50,
-      50,
-      10,
-      3,
-      20,
-      3
-    );
+    this.player = new Player(canvas.width / 2 + 100, canvas.height / 2);
     this.entities.push(this.player);
   }
 
@@ -171,11 +159,15 @@ class Game {
     let newBuilding;
     switch (buildOpt) {
       case BUILDING.WAREHOUSE:
-        newBuilding = new WareHouse(mx, my, 50, 50, 18, 11, 36, 11);
+        newBuilding = new WareHouse(mx, my);
         break;
       case BUILDING.HOUSE:
         console.log("HOUSE OPT");
         newBuilding = new House(mx, my, 50, 50, 18, 11, 36, 11);
+        break;
+      case BUILDING.SAWMILL:
+        console.log("SAWMILL OPT");
+        newBuilding = new Sawmill(mx, my, 50, 50, 18, 11, 36, 11);
         break;
     }
     this.entities.push(newBuilding);
@@ -183,8 +175,8 @@ class Game {
   }
 
   addStorage(material, unit) {
-    if(!this.storage[material]){
-      this.storage[material] =0;
+    if (!this.storage[material]) {
+      this.storage[material] = 0;
     }
     this.storage[material] += unit;
   }
@@ -214,6 +206,7 @@ class Game {
   constructBehaviorTree() {
     // ----------------------------------------------
     let isABuilder = new IsBuilderNode("Builder Job Check");
+    let inProgressBuilding = new BuildingInProgress("In Progress");
     let hasTaskBuilding2 = new HasTaskNode(KIND.BUILDING);
     let closeToWarehouse2 = new IsCloseTo();
     let build = new BuildNode();
@@ -223,6 +216,7 @@ class Game {
     let builder = new BTSequence(
       isABuilder,
       hasTaskBuilding2,
+      inProgressBuilding,
       closeToWarehouse2,
       build
     );
@@ -232,6 +226,7 @@ class Game {
     // ----------------------------------------------
     let assingNewJobSequence = new BTSequence(hasNewJob, assingnNewJob);
     // ----------------------------------------------
+    let isNotInProgress = new BTInverter(new BuildingInProgress("In Progress"));
     let hasTaskBuilding = new HasTaskNode(KIND.BUILDING);
     let closeToWarehouse = new IsCloseTo();
     let hasItemOnBag = new IsBagNotEmpty();
@@ -239,6 +234,7 @@ class Game {
     // ----------------------------------------------
     let dropping = new BTSequence(
       hasTaskBuilding,
+      isNotInProgress,
       closeToWarehouse,
       hasItemOnBag,
       drop

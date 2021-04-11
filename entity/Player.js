@@ -1,6 +1,6 @@
 class Player extends BaseEntity {
   constructor(x, y, w, h, ofx, ofy, sw, sh) {
-    super(x, y, w, h, ofx, ofy, sw, sh);
+    super(x, y, peasantBox.w, peasantBox.h, peasantBox.ofx, peasantBox.ofy, peasantBox.sw, peasantBox.sh);
 
     this.frame = 0;
     this.speed = 0.1;
@@ -18,11 +18,12 @@ class Player extends BaseEntity {
 
     this.action = ACTION.IDLE;
     this.job = null;
-    this.capacity = 0;
-    this.fullCapacity = 5;
-    this.capacityType = RESOURCE.WOOD;
+    this.bag = { full:5, items:[]}
+    //this.capacity = 0;
+   // this.fullCapacity = 5;
+   // this.capacityType = RESOURCE.WOOD;
     this.heading = DIRECTION.DOWN;
-    this.config = playerConfig;
+    this.config = spriteConfig;
     this.resource = null;
     this.kind = KIND.VILLAGE;
 
@@ -42,12 +43,12 @@ class Player extends BaseEntity {
     super.drawSprite(
       this.config[this.action][this.heading][this.frame].x - 1,
       this.config[this.action][this.heading][this.frame].y,
-      this.config.w - 1,
-      this.config.h,
+      this.w - 1,
+      this.h,
       x,
       y,
-      this.config.w,
-      this.config.h
+      this.w,
+      this.h
     );
 
     if (this.count > this.numbFrame) {
@@ -59,18 +60,13 @@ class Player extends BaseEntity {
 
     if (this.action === ACTION.WOODCUTTING) {
       ctx.font = "10px Arial";
-      ctx.fillText("+ " + this.capacity, this.pos.x - this.w, this.pos.y);
+      ctx.fillText("+ " + this.bag.items.length, this.pos.x - this.w, this.pos.y);
     }
 
-    //this.debug();
-    /* debug direction*/
-
-    // ctx.font = "30px Arial";
-    //ctx.fillText("+ " + this.heading, 10, 50);
   }
 
   emit(event) {
-    if (event === ACTION.WOODCUTTING) {
+    if (event === RESOURCE.WOOD) {
       game.addAnimation(
         new Animation(ANIMATION.WOOD, this.pos.x, this.pos.y, 40)
       );
@@ -206,9 +202,9 @@ class Player extends BaseEntity {
   }
 }
 
-const playerConfig = {
-  w: 32,
-  h: 32,
+const peasantBox = { w:32, h:32, ofx:5, ofy:0, sw:5, sh:0}
+
+const spriteConfig = {
   [ACTION.IDLE]: {
     [DIRECTION.UP]: [
       { x: 0, y: 0 },

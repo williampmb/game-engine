@@ -23,7 +23,7 @@ class Mouse {
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, 2, 0, 2 * Math.PI);
     ctx.stroke();*/
-    //this.selected.entities.forEach((e) => e.box.draw());
+    this.selected.entities.forEach((e) => e.box.draw());
     if (this.state === MOUSE_STATE.BUILDING) {
       ctx.beginPath();
       let side = 50;

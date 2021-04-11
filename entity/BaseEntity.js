@@ -17,11 +17,11 @@ const TYPE = {
 };
 
 const JOB = {
-  IDLE: "IDLE",
-  WOODCUTTING: "WOODCUTTING",
-  MINING: "MINING",
-  HAVESTING: "HAVESTING",
-  BUILDING: "BUILDING",
+  IDLE: 0,
+  WOODCUTER: 1,
+  MINER: 2,
+  HAVESTER: 3,
+  BUILDER: 4,
 };
 
 const DIRECTION = {
@@ -55,12 +55,12 @@ class BaseEntity {
       this.img,
       0,
       0,
-      50,
-      50,
+      64,
+      64,
       this.pos.x - this.w / 2,
       this.pos.y - this.h / 2,
-      50,
-      50
+      64,
+      64
     );
   }
   drawSprite(

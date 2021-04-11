@@ -15,6 +15,8 @@ class BuildNode extends BTNode {
       actor.resource.onCompleteBuilding();
     }
 
+    
+
     return BTNODE_STATUS.SUCCESS;
   }
 }

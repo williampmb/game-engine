@@ -10,8 +10,9 @@ class GatherResourceNode extends BTNode {
     actor.accumulatorWood++;
     if (actor.accumulatorWood >= actor.speedWoodcuting) {
       actor.accumulatorWood = 0;
-      actor.emit(ACTION.WOODCUTTING);
-      actor.capacity++;
+      let material = actor.resource.getMaterial();
+      actor.emit(material);
+      actor.bag.items.push(material);
     }
 
     actor.action = this.action;

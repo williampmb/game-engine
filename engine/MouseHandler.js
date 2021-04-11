@@ -80,7 +80,7 @@ class MouseHandler {
       return;
     }
 
-    let { x, y } = getClickedNormalized(event);
+    let { x, y } = getClickedNormalized(mouseEvent);
     let dt = 9999;
 
     mouse.pos = new Vector2D(x, y);

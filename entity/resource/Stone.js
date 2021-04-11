@@ -15,7 +15,7 @@ class Stone extends Resource {
     this.img.src = "../resource/stone.png";
 
     this.action = ACTION.IDLE;
-    this.job = JOB.MINING;
+    this.job = JOB.MINER;
     this.kind = KIND.RESOURCE;
 
     game.registerMouseLeftClick(this);

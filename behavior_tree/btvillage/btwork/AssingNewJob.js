@@ -18,7 +18,7 @@ class AssingNewJob extends BTNode {
         resource.kind === TYPE.BUILDING &&
         resource.construction === BUILDING_STATUS.IN_PROGRESS
       ) {
-        job = JOB.BUILDING;
+        job = JOB.BUILDER;
       }
       kind = resource.kind;
       [x, y] = resource.getAvailablePosInJob();
