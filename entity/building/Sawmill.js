@@ -10,7 +10,7 @@ class Sawmill extends Building {
   }
 
   getProduct(){
-    return RESOURCE.PLANK;
+  return RESOURCE.PLANK;
   }
 
   addStorage(material) {

@@ -6,7 +6,7 @@ class DropResourceNode extends BTNode {
   think() {
     const actor = game.peasantBehavior.getActor();
     let item = actor.bag.items.pop();
-    actor.resource.addStorage(item);
+    actor.task.warehouse.addStorage(item);
     return BTNODE_STATUS.SUCCESS;
   }
 }

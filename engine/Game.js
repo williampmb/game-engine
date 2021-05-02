@@ -133,7 +133,7 @@ class Game {
     let required = REQUIRED_RESOURCE[buildOpt];
     let enoughResource = true;
     Object.keys(required).forEach((resource) => {
-      if (required[resource] > this.storage[resource]) {
+      if (!this.storage[resource] || required[resource] > this.storage[resource]) {
         enoughResource = false;
         console.log("Not enough resource");
         return;

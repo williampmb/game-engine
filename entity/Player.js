@@ -1,6 +1,15 @@
 class Player extends BaseEntity {
-  constructor(x, y, w, h, ofx, ofy, sw, sh) {
-    super(x, y, peasantBox.w, peasantBox.h, peasantBox.ofx, peasantBox.ofy, peasantBox.sw, peasantBox.sh);
+  constructor(x, y) {
+    super(
+      x,
+      y,
+      peasantBox.w,
+      peasantBox.h,
+      peasantBox.ofx,
+      peasantBox.ofy,
+      peasantBox.sw,
+      peasantBox.sh
+    );
 
     this.frame = 0;
     this.speed = 0.1;
@@ -18,10 +27,10 @@ class Player extends BaseEntity {
 
     this.action = ACTION.IDLE;
     this.job = null;
-    this.bag = { full:5, items:[]}
+    this.bag = { full: 1, items: [] };
     //this.capacity = 0;
-   // this.fullCapacity = 5;
-   // this.capacityType = RESOURCE.WOOD;
+    // this.fullCapacity = 5;
+    // this.capacityType = RESOURCE.WOOD;
     this.heading = DIRECTION.DOWN;
     this.config = spriteConfig;
     this.resource = null;
@@ -29,8 +38,6 @@ class Player extends BaseEntity {
 
     game.registerMouseLeftClick(this);
   }
-
-  
 
   update() {
     game.peasantBehavior.process(this);
@@ -60,9 +67,12 @@ class Player extends BaseEntity {
 
     if (this.action === ACTION.WOODCUTTING) {
       ctx.font = "10px Arial";
-      ctx.fillText("+ " + this.bag.items.length, this.pos.x - this.w, this.pos.y);
+      ctx.fillText(
+        "+ " + this.bag.items.length,
+        this.pos.x - this.w,
+        this.pos.y
+      );
     }
-
   }
 
   emit(event) {
@@ -90,12 +100,23 @@ class Player extends BaseEntity {
   }
 
   findWarehouse() {
-    let building = game.buildings[0];
+    let buildings = game.buildings;
+    let warehouse;
+    let current;
+    for (current of buildings) {
+      if (current instanceof WareHouse) {
+        warehouse = current;
+        break;
+      }
+    }
+
+
     let task = { pos: null, kind: KIND.NONE };
-    if (building) {
+    if (warehouse) {
       task = {
-        pos: new Vector2D(building.pos.x, building.pos.y),
+        pos: new Vector2D(warehouse.pos.x, warehouse.pos.y),
         kind: KIND.BUILDING,
+        warehouse
       };
     }
 
@@ -202,7 +223,7 @@ class Player extends BaseEntity {
   }
 }
 
-const peasantBox = { w:32, h:32, ofx:5, ofy:0, sw:5, sh:0}
+const peasantBox = { w: 32, h: 32, ofx: 5, ofy: 0, sw: 5, sh: 0 };
 
 const spriteConfig = {
   [ACTION.IDLE]: {
